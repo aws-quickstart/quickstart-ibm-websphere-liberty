@@ -39,14 +39,6 @@
                 },
                 {
                     "Label": {
-                        "default": "Workload Storage Configuration"
-                    },
-                    "Parameters": [
-                        "S3BucketName"
-                    ]
-                },
-                {
-                    "Label": {
                         "default": "AWS Quick Start Configuration"
                     },
                     "Parameters": [
@@ -82,9 +74,6 @@
                 },
                 "QSS3KeyPrefix": {
                     "default": "Quick Start S3 Key Prefix"
-                },
-                "S3BucketName": {
-                    "default": "S3 Bucket Name"
                 },
                 "VPCID": {
                     "default": "VPC ID"
@@ -148,12 +137,6 @@
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Default": "examples/latest/",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Type": "String"
-        },
-        "S3BucketName": {
-            "AllowedPattern": "^[a-z0-9][a-z0-9-.]*$",
-            "Default": "type-unique-value-here-in-lowercase",
-            "Description": "Name of the S3 bucket that will be created for your workload to store data. Enter a unique name that does not include uppercase characters.",
             "Type": "String"
         },
         "VPCID": {
@@ -435,49 +418,18 @@
                     {
                         "PolicyName": "WorkloadSetup",
                         "PolicyDocument": {
-                            "Statement": [
-                                {
-                                    "Effect": "Allow",
-                                    "Action": [
-                                        "cloudwatch:PutMetricData",
-                                        "cloudwatch:EnableAlarmActions",
-                                        "cloudwatch:PutMetricAlarm"
-                                    ],
-                                    "Resource": "*"
-                                },
-                                {
-                                    "Effect": "Allow",
-                                    "Action": [
-                                        "s3:*"
-                                    ],
-                                    "Resource": [
-                                        {
-                                            "Fn::Join": [
-                                                "",
-                                                [
-                                                    "arn:aws:s3:::",
-                                                    {
-                                                        "Ref": "S3Bucket"
-                                                    },
-                                                    ""
-                                                ]
-                                            ]
-                                        },
-                                        {
-                                            "Fn::Join": [
-                                                "",
-                                                [
-                                                    "arn:aws:s3:::",
-                                                    {
-                                                        "Ref": "S3Bucket"
-                                                    },
-                                                    "/*"
-                                                ]
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
+                            "Statement": 
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "cloudwatch:PutMetricData",
+                                    "cloudwatch:EnableAlarmActions",
+                                    "cloudwatch:PutMetricAlarm"
+                                ],
+                                "Resource": "*"
+                            }
+                                
+                            
                         }
                     }
                 ]
@@ -866,15 +818,7 @@
                 }
             }
         },
-        "S3Bucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-                "BucketName": {
-                    "Ref": "S3BucketName"
-                },
-                "AccessControl": "BucketOwnerFullControl"
-            }
-        }
+        
     },
     "Outputs" : {
     "WebsiteURL" : {

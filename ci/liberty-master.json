@@ -1,0 +1,75 @@
+[
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[alfred_genaz_2]"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.250.0.0/16"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1CIDR",
+        "ParameterValue": "10.250.1.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2CIDR",
+        "ParameterValue": "10.250.2.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnet1CIDR",
+        "ParameterValue": "10.250.3.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnet2CIDR",
+        "ParameterValue": "10.250.4.0/24"
+    },
+    {
+        "ParameterKey": "BastionAMIOS",
+        "ParameterValue": "Amazon-Linux-HVM"
+    },
+    {
+        "ParameterKey": "BastionInstanceType",
+        "ParameterValue": "t2.micro"
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "madOhio"
+    },
+    {
+        "ParameterKey": "RemoteAccessCIDR",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    
+    
+    
+    {
+        "ParameterKey": "WorkloadInstanceType",
+        "ParameterValue": "t2.large"
+    },
+    {
+        "ParameterKey": "WorkloadNodesMinSize",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "WorkloadNodesMaxSize",
+        "ParameterValue": "4"
+    },
+    {
+        "ParameterKey": "WorkloadNodesDesiredCapacity",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "OperatorEmail",
+        "ParameterValue": "foo@example.com"
+    },
+    
+    
+    {
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "$[taskcat_autobucket]"
+    },
+    {
+        "ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": "quickstart-ibm-websphere-liberty"
+    }
+]
