@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "This master template creates a VPC infrastructure for a multi-AZ, multi-tier deployment of a workload on AWS. It deploys a VPC with bastions and a workload cluster behind an ELB. The cluster is configured to use an S3 bucket for storage  **WARNING** This template creates EC2 instances and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Description": "This master template creates a VPC infrastructure for a multi-AZ, multi-tier deployment of a Liberty on AWS. It deploys a VPC with bastions and a Liberty cluster behind an ELB. The cluster is configured to use an S3 bucket for storage  **WARNING** This template creates EC2 instances and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
     "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [
@@ -26,16 +26,16 @@
                         "KeyPairName",
                         "BastionAMIOS",
                         "BastionInstanceType",
-                        "WorkloadInstanceType"
+                        "LibertyInstanceType"
                     ]
                 },
                 {
                     "Label": {
-                        "default": "Workload Nodes Configuration"
+                        "default": "Liberty Nodes Configuration"
                     },
                     "Parameters": [
-                        "WorkloadNodesMinSize",
-                        "NodesMaxSize",
+                        "LibertyNodesMinSize",
+                        "LibertyNodesMaxSize",
                         "OperatorEmail"
                     ]
                 },
@@ -89,17 +89,20 @@
                 "VPCCIDR": {
                     "default": "VPC CIDR"
                 },
-                "WorkloadInstanceType": {
-                    "default": "Workload Servers Instance Type"
+                "LibertyInstanceType": {
+                    "default": "Liberty Servers Instance Type"
                 },
-                "WorkloadoNodesDesiredCapacity": {
-                    "default": "Workload Nodes Desired Capacity"
+                "LibertyNodesDesiredCapacity": {
+                    "default": "Liberty Nodes Desired Capacity"
                 },
-                "WorkloadNodesMaxSize": {
-                    "default": "Workload Nodes Max Size"
+                "LibertyNodesMaxSize": {
+                    "default": "Liberty Nodes Max Size"
                 },
-                "WorkloadNodesMinSize": {
-                    "default": "Workload Nodes Min Size"
+                "LibertyNodesMinSize": {
+                    "default": "Liberty Nodes Min Size"
+                },
+                "SampleAppRequired": {
+                    "default": "Sample Application to be deployed?"
                 }
             }
         }
@@ -204,7 +207,7 @@
             "Description": "CIDR block for the VPC",
             "Type": "String"
         },
-        "WorkloadInstanceType": {
+        "LibertyInstanceType": {
             "AllowedValues": [
                 "t2.large",
                 "m4.large",
@@ -231,22 +234,27 @@
             ],
             "ConstraintDescription": "Must contain valid instance type",
             "Default": "m4.xlarge",
-            "Description": "EC2 instance type for the Workload instances",
+            "Description": "EC2 instance type for the Liberty instances",
             "Type": "String"
         },
-        "WorkloadNodesDesiredCapacity": {
+        "LibertyNodesDesiredCapacity": {
             "Default": "2",
-            "Description": "The desired capacity for the Workload nodes Auto Scaling group",
+            "Description": "The desired capacity for the Liberty nodes Auto Scaling group",
             "Type": "String"
         },
-        "WorkloadNodesMaxSize": {
+        "LibertyNodesMaxSize": {
             "Default": "4",
             "Description": "The maximum size of the Auto Scaling group",
             "Type": "String"
         },
-        "WorkloadNodesMinSize": {
+        "LibertyNodesMinSize": {
             "Default": "2",
             "Description": "The minimum size of the Auto Scaling group",
+            "Type": "String"
+        },
+        "SampleAppRequired": {
+            "Default": "yes",
+            "Description": "Enter \"yes\" if you want the Quickstart to deploy a sample application and \"no\" if not",
             "Type": "String"
         }
     },
@@ -335,7 +343,7 @@
                 }
             }
         },
-        "WorkloadStack": {
+        "LibertyStack": {
             "DependsOn": "BastionStack",
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
@@ -343,17 +351,17 @@
                     "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/templates/liberty.template"
                 },
                 "Parameters": {
-                    "WorkloadInstanceType": {
-                        "Ref": "WorkloadInstanceType"
+                    "LibertyInstanceType": {
+                        "Ref": "LibertyInstanceType"
                     },
-                    "WorkloadNodesDesiredCapacity": {
-                        "Ref": "WorkloadNodesDesiredCapacity"
+                    "LibertyNodesDesiredCapacity": {
+                        "Ref": "LibertyNodesDesiredCapacity"
                     },
-                    "WorkloadNodesMaxSize": {
-                        "Ref": "WorkloadNodesMaxSize"
+                    "LibertyNodesMaxSize": {
+                        "Ref": "LibertyNodesMaxSize"
                     },
-                    "WorkloadNodesMinSize": {
-                        "Ref": "WorkloadNodesMinSize"
+                    "LibertyNodesMinSize": {
+                        "Ref": "LibertyNodesMinSize"
                     },
                     "BastionSecurityGroupID": {
                         "Fn::GetAtt": [
@@ -402,6 +410,9 @@
                             "VPCStack",
                             "Outputs.VPCID"
                         ]
+                    },
+                    "SampleAppRequired": {
+                        "Ref": "SampleAppRequired"
                     }
                 }
             }

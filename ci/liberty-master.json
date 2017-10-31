@@ -33,37 +33,37 @@
     },
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "madOhio"
+        "ParameterValue": "madCanada"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
         "ParameterValue": "0.0.0.0/0"
-    },
-    
-    
+    },    
     
     {
-        "ParameterKey": "WorkloadInstanceType",
+        "ParameterKey": "LibertyInstanceType",
         "ParameterValue": "t2.large"
     },
     {
-        "ParameterKey": "WorkloadNodesMinSize",
+        "ParameterKey": "LibertyNodesMinSize",
         "ParameterValue": "2"
     },
     {
-        "ParameterKey": "WorkloadNodesMaxSize",
+        "ParameterKey": "LibertyNodesMaxSize",
         "ParameterValue": "4"
     },
     {
-        "ParameterKey": "WorkloadNodesDesiredCapacity",
+        "ParameterKey": "LibertyNodesDesiredCapacity",
         "ParameterValue": "2"
     },
     {
         "ParameterKey": "OperatorEmail",
         "ParameterValue": "foo@example.com"
     },
-    
-    
+    {
+        "ParameterKey": "SampleAppRequired",
+        "ParameterValue": "no"
+    },    
     {
         "ParameterKey": "QSS3BucketName",
         "ParameterValue": "$[taskcat_autobucket]"

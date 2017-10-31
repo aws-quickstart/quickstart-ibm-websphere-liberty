@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "This workload template deploys an ASG behind an ELB load balancer in two private subnets. The cluster is configured to use an S3 bucket for storage **WARNING** This template creates EC2 instances and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Description": "This Liberty template deploys an ASG behind an ELB load balancer in two private subnets. The cluster is configured to use an S3 bucket for storage **WARNING** This template creates EC2 instances and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
     "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [
@@ -23,17 +23,17 @@
                     "Parameters": [
                         "KeyPairName",
                         "BastionSecurityGroupID",
-                        "WorkloadInstanceType"
+                        "LibertyInstanceType"
                     ]
                 },
                 {
                     "Label": {
-                        "default": "Workload Nodes Configuration"
+                        "default": "Liberty Nodes Configuration"
                     },
                     "Parameters": [
-                        "WorkloadNodesMinSize",
-                        "WorkloadNodesMaxSize",
-                        "WorkloadNodesDesiredCapacity",
+                        "LibertyNodesMinSize",
+                        "LibertyNodesMaxSize",
+                        "LibertyNodesDesiredCapacity",
                         "OperatorEmail"
                     ]
                 },
@@ -78,22 +78,28 @@
                 "VPCID": {
                     "default": "VPC ID"
                 },
-                "WorkloadInstanceType": {
-                    "default": "Workload Servers Instance Type"
+                "LibertyInstanceType": {
+                    "default": "Liberty Servers Instance Type"
                 },
-                "WorkloadNodesDesiredCapacity": {
-                    "default": "Workload Nodes Desired Capacity"
+                "LibertyNodesDesiredCapacity": {
+                    "default": "Liberty Nodes Desired Capacity"
                 },
-                "WorkloadNodesMaxSize": {
-                    "default": "Workload Nodes Max Size"
+                "LibertyNodesMaxSize": {
+                    "default": "Liberty Nodes Max Size"
                 },
-                "WorkloadNodesMinSize": {
-                    "default": "Workload Nodes Min Size"
+                "LibertyNodesMinSize": {
+                    "default": "Liberty Nodes Min Size"
                 }
             }
         }
     },
     "Parameters": {
+
+        "SampleAppRequired": {
+            "Default": "yes",
+            "Description": "Enter \"yes\" if you want the Quickstart to deploy a sample application and \"no\" if not",
+            "Type": "String"
+        },
         "BastionSecurityGroupID": {
             "Description": "ID of the bastion host security group to enable SSH connections (e.g., sg-7f16e910)",
             "Type": "AWS::EC2::SecurityGroup::Id"
@@ -110,11 +116,11 @@
             "Type": "String"
         },
         "PrivateSubnet1ID": {
-            "Description": "ID of private subnet 1 in Availability Zone 1 for the Workload (e.g., subnet-a0246dcd)",
+            "Description": "ID of private subnet 1 in Availability Zone 1 for the Liberty (e.g., subnet-a0246dcd)",
             "Type": "AWS::EC2::Subnet::Id"
         },
         "PrivateSubnet2ID": {
-            "Description": "ID of private subnet 2 in Availability Zone 2 for the Workload (e.g., subnet-b1f432cd)",
+            "Description": "ID of private subnet 2 in Availability Zone 2 for the Liberty (e.g., subnet-b1f432cd)",
             "Type": "AWS::EC2::Subnet::Id"
         },
         "PublicSubnet1ID": {
@@ -143,7 +149,7 @@
             "Description": "ID of your existing VPC for deployment",
             "Type": "AWS::EC2::VPC::Id"
         },
-        "WorkloadInstanceType": {
+        "LibertyInstanceType": {
             "AllowedValues": [
                 "t2.large",
                 "m4.large",
@@ -170,24 +176,35 @@
             ],
             "ConstraintDescription": "Must contain valid instance type",
             "Default": "m4.xlarge",
-            "Description": "Type of EC2 instance for the Workload instances",
+            "Description": "Type of EC2 instance for the Liberty instances",
             "Type": "String"
         },
-        "WorkloadNodesDesiredCapacity": {
+        "LibertyNodesDesiredCapacity": {
             "Default": "2",
-            "Description": "The desired capacity for the Workload nodes Auto Scaling group",
+            "Description": "The desired capacity for the Liberty nodes Auto Scaling group",
             "Type": "String"
         },
-        "WorkloadNodesMaxSize": {
+        "LibertyNodesMaxSize": {
             "Default": "4",
             "Description": "The maximum size of the Auto Scaling group",
             "Type": "String"
         },
-        "WorkloadNodesMinSize": {
+        "LibertyNodesMinSize": {
             "Default": "2",
             "Description": "The minimum size of the Auto Scaling group",
             "Type": "String"
         }
+       
+    },
+     "Conditions": {
+            "Sampleapp": {
+                "Fn::Equals": [
+                    {
+                        "Ref": "SampleAppRequired"
+                    },
+                    "yes"
+                ]
+            }
     },
     "Rules": {
         "KeyPairsNotEmpty": {
@@ -378,7 +395,7 @@
             }
         },
 
-        "SetupRole": {
+        "LibertyRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "AssumeRolePolicyDocument": {
@@ -416,7 +433,7 @@
                         "PolicyName": "aws-quick-start-s3-policy"
                     },
                     {
-                        "PolicyName": "WorkloadSetup",
+                        "PolicyName": "LibertySetup",
                         "PolicyDocument": {
                             "Statement": 
                             {
@@ -435,21 +452,21 @@
                 ]
             }
         },
-        "SetupRoleProfile": {
+        "LibertyProfile": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
                 "Path": "/",
                 "Roles": [
                     {
-                        "Ref": "SetupRole"
+                        "Ref": "LibertyRole"
                     }
                 ]
             }
         },
-        "WorkloadSecurityGroup": {
+        "LibertySecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
-                "GroupDescription": "Allow access to the Workload instances",
+                "GroupDescription": "Allow access to the Liberty instances",
                 "VpcId": {
                     "Ref": "VPCID"
                 },
@@ -458,14 +475,6 @@
                         "IpProtocol": "tcp",
                         "FromPort": "9080",
                         "ToPort": "9080",
-                        "SourceSecurityGroupId": {
-                            "Ref": "ELBSecurityGroup"
-                        }
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "443",
-                        "ToPort": "443",
                         "SourceSecurityGroupId": {
                             "Ref": "ELBSecurityGroup"
                         }
@@ -481,7 +490,7 @@
                 ]
             }
         },
-        "WorkloadASLaunchConfig": {
+        "LibertyASLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Metadata": {
 
@@ -489,7 +498,7 @@
                     "S3AccessCreds": {
                         "type": "S3",
                         "roleName": {
-                            "Ref": "SetupRole"
+                            "Ref": "LibertyRole"
                         },
                         "buckets": [
                             {
@@ -500,10 +509,17 @@
                 },
                 "AWS::CloudFormation::Init": {
                     "configSets": {
-                        "quickstart": [
+                        "quickstartwithSampleapp": [
                             "install",
                             "configure",
-                            "cleanup"
+                            "deploySampleApp",
+                            "startServer"
+
+                        ],
+                        "quickstartwithoutSampleapp": [
+                            "install",
+                            "configure",
+                            "startServer"
                         ]
                     },
                     "install": {
@@ -537,12 +553,7 @@
                                 "group"   : "root",
                                 "authentication": "S3AccessCreds"
                             },
-                            "/tmp/ferret-1.0.war": {
-                                "source": "http://repo1.maven.org/maven2/net/wasdev/wlp/sample/ferret/1.0/ferret-1.0.war",
-                                "mode"   : "000544",
-                                "owner"  : "root",
-                                "group"  : "root"
-                             },
+                           
                             "/tmp/01_create_liberty_server.sh": {
                                 "source": {
                                     "Fn::Sub": 
@@ -556,11 +567,49 @@
                                 "owner": "root",
                                 "group": "root",
                                 "authentication": "S3AccessCreds"
+                            }
+                            
+                                    
+                    },
+                    "commands": {
+                        "01_create_Server": {
+                            "command": "/tmp/01_create_liberty_server.sh"
+                        }
+                    }   
+                },
+                "configure": {
+                    "files": {
+                        "/tmp/02_configureServer.sh": {
+                            "source": {
+                                "Fn::Sub": 
+                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/configureServer.sh"                        
                             },
-                            "/tmp/02_configureServer.sh": {
+                 
+                            "mode": "000755",
+                            "owner": "root",
+                            "group": "root",
+                            "authentication": "S3AccessCreds"
+                        }
+
+                    },
+                    "commands": {
+                        "02_configure_Server": {
+                            "command": "/tmp/02_configureServer.sh"
+                        }
+                    }
+                },
+                "deploySampleApp":{
+                    "files" : {
+                        "/tmp/ferret-1.0.war": {
+                            "source": "http://repo1.maven.org/maven2/net/wasdev/wlp/sample/ferret/1.0/ferret-1.0.war",
+                            "mode"   : "000544",
+                            "owner"  : "root",
+                            "group"  : "root"
+                        },
+                        "/tmp/03_deploySampleApp.sh": {
                              "source": {
                                     "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/configureServer.sh"
+                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/deploySampleApp.sh"
                                         
                                     
                             },
@@ -569,23 +618,38 @@
                             "owner": "root",
                             "group": "root",
                             "authentication": "S3AccessCreds"
-                        }
-                                    
-                    }   
-                },
-                "configure": {
+                        }    
+                    },
                     "commands": {
-                            "01_set_env": {
-                                 "command": ". /etc/profile.d/wlp.sh"
-                            },
-                            "02_install_liberty": {
-                                "command": "/tmp/01_create_liberty_server.sh"
-                            },
-                            "03_configure_Server": {
-                                "command": "/tmp/02_configureServer.sh"
+                            
+                            "03_deploy_sample_app": {
+                                "command": "/tmp/03_deploySampleApp.sh"
                             }
                     }
+
                 },
+                "startServer": {
+                    "files": {
+                        "/tmp/04_startServer.sh": {
+                            "source": {
+                                "Fn::Sub": 
+                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/startServer.sh"                        
+                            },
+                 
+                            "mode": "000755",
+                            "owner": "root",
+                            "group": "root",
+                            "authentication": "S3AccessCreds"
+                        }
+
+                    },
+                    "commands": {
+                        "04_start_Server": {
+                            "command": "/tmp/04_startServer.sh"
+                        }
+                    }
+                },
+
                 "cleanup": {}
             }
         },
@@ -604,14 +668,14 @@
             },
              "InstanceMonitoring": "true",
             "IamInstanceProfile": {
-                "Ref": "SetupRoleProfile"
+                "Ref": "LibertyProfile"
             },
             "InstanceType": {
-                "Ref": "WorkloadInstanceType"
+                "Ref": "LibertyInstanceType"
             },
             "SecurityGroups": [
                 {
-                    "Ref": "WorkloadSecurityGroup"
+                    "Ref": "LibertySecurityGroup"
                 }
             ],
             "UserData": {
@@ -634,7 +698,16 @@
                             {
                                 "Ref": "AWS::StackName"
                             },
-                            " --resource WorkloadASLaunchConfig --configsets quickstart --region ",
+                            " --resource LibertyASLaunchConfig --configsets ",
+                            { 
+                                "Fn::If": [
+                                    "Sampleapp",
+                                    "quickstartwithSampleapp",
+                                    "quickstartwithoutSampleapp"
+                                ]   
+                            },
+                            " --region ",
+                            
                             {
                                  "Ref": "AWS::Region"
                             },
@@ -646,7 +719,7 @@
                             {
                                 "Ref": "AWS::StackName"
                             },
-                            " --resource WorkloadAutoScalingGroup --region ",
+                            " --resource LibertyAutoScalingGroup --region ",
                             {
                                 "Ref": "AWS::Region"
                             },
@@ -657,23 +730,23 @@
             }
         }
     },
-        "WorkloadScaleUpPolicy": {
+        "LibertyScaleUpPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": {
-                    "Ref": "WorkloadAutoScalingGroup"
+                    "Ref": "LibertyAutoScalingGroup"
                 },
                 "Cooldown": "300",
                 "ScalingAdjustment": "1"
             }
         },
-        "WorkloadScaleDownPolicy": {
+        "LibertyScaleDownPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": {
-                    "Ref": "WorkloadAutoScalingGroup"
+                    "Ref": "LibertyAutoScalingGroup"
                 },
                 "Cooldown": "300",
                 "ScalingAdjustment": "-1"
@@ -691,14 +764,14 @@
                 "Threshold": "60",
                 "AlarmActions": [
                     {
-                        "Ref": "WorkloadScaleUpPolicy"
+                        "Ref": "LibertyScaleUpPolicy"
                     }
                 ],
                 "Dimensions": [
                     {
                         "Name": "AutoScalingGroupName",
                         "Value": {
-                            "Ref": "WorkloadAutoScalingGroup"
+                            "Ref": "LibertyAutoScalingGroup"
                         }
                     }
                 ],
@@ -717,21 +790,21 @@
                 "Threshold": "40",
                 "AlarmActions": [
                     {
-                        "Ref": "WorkloadScaleDownPolicy"
+                        "Ref": "LibertyScaleDownPolicy"
                     }
                 ],
                 "Dimensions": [
                     {
                         "Name": "AutoScalingGroupName",
                         "Value": {
-                            "Ref": "WorkloadAutoScalingGroup"
+                            "Ref": "LibertyAutoScalingGroup"
                         }
                     }
                 ],
                 "ComparisonOperator": "LessThanThreshold"
             }
         },
-        "WorkloadAutoScalingGroup": {
+        "LibertyAutoScalingGroup": {
             "Type": "AWS::AutoScaling::AutoScalingGroup",
             "Properties": {
                 "VPCZoneIdentifier": [
@@ -744,21 +817,21 @@
                 ],
                 "Cooldown": "600",
                 "DesiredCapacity": {
-                    "Ref": "WorkloadNodesDesiredCapacity"
+                    "Ref": "LibertyNodesDesiredCapacity"
                 },
                 "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ],
 
                 "HealthCheckGracePeriod": "600",
                 "HealthCheckType": "EC2",
                 "LaunchConfigurationName": {
-                    "Ref": "WorkloadASLaunchConfig"
+                    "Ref": "LibertyASLaunchConfig"
                 },
                 
                 "MaxSize": {
-                    "Ref": "WorkloadNodesMaxSize"
+                    "Ref": "LibertyNodesMaxSize"
                 },
                 "MinSize": {
-                    "Ref": "WorkloadNodesMinSize"
+                    "Ref": "LibertyNodesMinSize"
                 },
                 "NotificationConfiguration": {
                     "TopicARN": {
@@ -775,7 +848,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "Workload Server cluster node",
+                        "Value": "Liberty Server cluster node",
                         "PropagateAtLaunch": "true"
                     }
                 ]
@@ -783,14 +856,14 @@
             "CreationPolicy": {
                 "ResourceSignal": {
                     "Count": {
-                        "Ref": "WorkloadNodesDesiredCapacity"
+                        "Ref": "LibertyNodesDesiredCapacity"
                     },
                     "Timeout": "PT2H"
                 }
             }
         },
 
-        "WorkloadCloudFrontDistribution" : {
+        "LibertyCloudFrontDistribution" : {
             "Type" : "AWS::CloudFront::Distribution",
             "Properties" : {
                 "DistributionConfig" : {
@@ -817,13 +890,20 @@
                    "ViewerCertificate": { "CloudFrontDefaultCertificate" : "true" }
                 }
             }
-        },
+        }
         
     },
     "Outputs" : {
     "WebsiteURL" : {
       "Description" : "URL for newly created Liberty stack",
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WorkloadCloudFrontDistribution", "DomainName" ]},"/ferret"]] }
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "LibertyCloudFrontDistribution", "DomainName" ]},
+        "Fn::If": [
+            "Sampleapp",
+            "/ferret",
+            ""
+        ]
+
+      ]] }
     }
   }  
 }

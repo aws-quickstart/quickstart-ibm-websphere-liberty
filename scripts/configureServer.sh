@@ -10,8 +10,3 @@ sed '11 a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  host = "\*" ' s1.xml > $WLP_HOME/us
 
 rm -rf s1.xml
 
-# Deploy ferret sample application
-mv /tmp/ferret-1.0.war $WLP_HOME/usr/servers/defaultServer/dropins/ferret-1.0.war
-                      
-# Start the WLP server
-service wlp start
