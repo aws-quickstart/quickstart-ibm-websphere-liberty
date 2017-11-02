@@ -528,12 +528,9 @@
                
                         },
                         "files" : {
-                           "/etc/profile.d/wlp.sh": {
+                            "/etc/profile.d/wlp.sh": {
                                 "source": {
-                                    "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/wlp.sh"
-                                  
-                                    
+                                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/wlp.sh"
                                 },
                                 "mode": "000755",
                                 "owner": "root",
@@ -543,7 +540,7 @@
                             "/etc/init.d/wlp":{
                                 "source": {
                                     "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/wlp"
+                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/wlp"
                                         
                                     
                                 },
@@ -557,7 +554,7 @@
                             "/tmp/01_create_liberty_server.sh": {
                                 "source": {
                                     "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/createServer.sh"
+                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/createServer.sh"
                                     
                                         
                                     
@@ -582,7 +579,7 @@
                         "/tmp/02_configureServer.sh": {
                             "source": {
                                 "Fn::Sub": 
-                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/configureServer.sh"                        
+                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/configureServer.sh"
                             },
                  
                             "mode": "000755",
@@ -609,7 +606,7 @@
                         "/tmp/03_deploySampleApp.sh": {
                              "source": {
                                     "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/deploySampleApp.sh"
+                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/deploySampleApp.sh"
                                         
                                     
                             },
@@ -633,7 +630,7 @@
                         "/tmp/04_startServer.sh": {
                             "source": {
                                 "Fn::Sub": 
-                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}/scripts/startServer.sh"                        
+                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/startServer.sh"
                             },
                  
                             "mode": "000755",
