@@ -94,7 +94,6 @@
         }
     },
     "Parameters": {
-
         "SampleAppRequired": {
             "Default": "yes",
             "Description": "Enter \"yes\" if you want the Quickstart to deploy a sample application and \"no\" if not",
@@ -103,7 +102,6 @@
         "BastionSecurityGroupID": {
             "Description": "ID of the bastion host security group to enable SSH connections (e.g., sg-7f16e910)",
             "Type": "AWS::EC2::SecurityGroup::Id"
-            
         },
         "KeyPairName": {
             "Description": "Name of an existing EC2 key pair. All instances will launch with this key pair.",
@@ -194,17 +192,16 @@
             "Description": "The minimum size of the Auto Scaling group",
             "Type": "String"
         }
-       
     },
-     "Conditions": {
-            "Sampleapp": {
-                "Fn::Equals": [
-                    {
-                        "Ref": "SampleAppRequired"
-                    },
-                    "yes"
-                ]
-            }
+    "Conditions": {
+        "Sampleapp": {
+            "Fn::Equals": [
+                {
+                    "Ref": "SampleAppRequired"
+                },
+                "yes"
+            ]
+        }
     },
     "Rules": {
         "KeyPairsNotEmpty": {
@@ -333,16 +330,15 @@
                 ]
             }
         },
-        "ApplicationLoadBalancer" : {
-            "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
-            "Properties" : {
-                "Subnets" : [
-                    
+        "ApplicationLoadBalancer": {
+            "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+            "Properties": {
+                "Subnets": [
                     {
-                         "Ref" : "PublicSubnet1ID"
+                        "Ref": "PublicSubnet1ID"
                     },
                     {
-                         "Ref" : "PublicSubnet2ID"
+                        "Ref": "PublicSubnet2ID"
                     }
                 ],
                 "SecurityGroups": [
@@ -352,49 +348,52 @@
                 ]
             }
         },
-        "ALBListener" : {
-             "Type" : "AWS::ElasticLoadBalancingV2::Listener",
-            "Properties" : {
-                "DefaultActions" : [
+        "ALBListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "DefaultActions": [
                     {
-                        "Type" : "forward",
-                        "TargetGroupArn" : { 
-                            "Ref" : "ALBTargetGroup" 
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "ALBTargetGroup"
                         }
                     }
                 ],
-                "LoadBalancerArn" : { 
-                    "Ref" : "ApplicationLoadBalancer" 
+                "LoadBalancerArn": {
+                    "Ref": "ApplicationLoadBalancer"
                 },
-                "Port" : "80",
-                "Protocol" : "HTTP"
+                "Port": "80",
+                "Protocol": "HTTP"
             }
         },
-        "ALBTargetGroup" : {
-            "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
-            "Properties" : {
-                "HealthCheckIntervalSeconds" : 30,
-                "HealthCheckTimeoutSeconds" : 5,
-                "HealthyThresholdCount" : 2,
-                "Port" : 9080,
-                "Protocol" : "HTTP",
-                "UnhealthyThresholdCount" : 5,
-                "VpcId" : {"Ref" : "VPCID"},
-                "TargetGroupAttributes" :
-                [  
-                     { 
-                        "Key" : "stickiness.enabled", "Value" : "true" 
+        "ALBTargetGroup": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "HealthCheckIntervalSeconds": 30,
+                "HealthCheckTimeoutSeconds": 5,
+                "HealthyThresholdCount": 2,
+                "Port": 9080,
+                "Protocol": "HTTP",
+                "UnhealthyThresholdCount": 5,
+                "VpcId": {
+                    "Ref": "VPCID"
+                },
+                "TargetGroupAttributes": [
+                    {
+                        "Key": "stickiness.enabled",
+                        "Value": "true"
                     },
-                    { 
-                        "Key" : "stickiness.type", "Value" : "lb_cookie" 
+                    {
+                        "Key": "stickiness.type",
+                        "Value": "lb_cookie"
                     },
-                    { 
-                        "Key" : "stickiness.lb_cookie.duration_seconds", "Value" : "30" 
+                    {
+                        "Key": "stickiness.lb_cookie.duration_seconds",
+                        "Value": "30"
                     }
                 ]
             }
         },
-
         "LibertyRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -435,8 +434,7 @@
                     {
                         "PolicyName": "LibertySetup",
                         "PolicyDocument": {
-                            "Statement": 
-                            {
+                            "Statement": {
                                 "Effect": "Allow",
                                 "Action": [
                                     "cloudwatch:PutMetricData",
@@ -445,8 +443,6 @@
                                 ],
                                 "Resource": "*"
                             }
-                                
-                            
                         }
                     }
                 ]
@@ -493,7 +489,6 @@
         "LibertyASLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Metadata": {
-
                 "AWS::CloudFormation::Authentication": {
                     "S3AccessCreds": {
                         "type": "S3",
@@ -514,7 +509,6 @@
                             "configure",
                             "deploySampleApp",
                             "startServer"
-
                         ],
                         "quickstartwithoutSampleapp": [
                             "install",
@@ -523,11 +517,10 @@
                         ]
                     },
                     "install": {
-                        "sources" : {
-                            "/opt/websphere" : "http://repo1.maven.org/maven2/com/ibm/websphere/appserver/runtime/wlp-webProfile7/17.0.0.2/wlp-webProfile7-17.0.0.2.zip"
-               
+                        "sources": {
+                            "/opt/websphere": "http://repo1.maven.org/maven2/com/ibm/websphere/appserver/runtime/wlp-webProfile7/17.0.0.2/wlp-webProfile7-17.0.0.2.zip"
                         },
-                        "files" : {
+                        "files": {
                             "/etc/profile.d/wlp.sh": {
                                 "source": {
                                     "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/wlp.sh"
@@ -537,196 +530,168 @@
                                 "group": "root",
                                 "authentication": "S3AccessCreds"
                             },
-                            "/etc/init.d/wlp":{
+                            "/etc/init.d/wlp": {
                                 "source": {
-                                    "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/wlp"
-                                        
-                                    
+                                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/wlp"
                                 },
-                                 
-                                "mode"    : "000700",
-                                "owner"   : "root",
-                                "group"   : "root",
+                                "mode": "000700",
+                                "owner": "root",
+                                "group": "root",
                                 "authentication": "S3AccessCreds"
                             },
-                           
                             "/tmp/01_create_liberty_server.sh": {
                                 "source": {
-                                    "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/createServer.sh"
-                                    
-                                        
-                                    
+                                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/createServer.sh"
                                 },
-                
                                 "mode": "000755",
                                 "owner": "root",
                                 "group": "root",
                                 "authentication": "S3AccessCreds"
                             }
-                            
-                                    
-                    },
-                    "commands": {
-                        "01_create_Server": {
-                            "command": "/tmp/01_create_liberty_server.sh"
-                        }
-                    }   
-                },
-                "configure": {
-                    "files": {
-                        "/tmp/02_configureServer.sh": {
-                            "source": {
-                                "Fn::Sub": 
-                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/configureServer.sh"
-                            },
-                 
-                            "mode": "000755",
-                            "owner": "root",
-                            "group": "root",
-                            "authentication": "S3AccessCreds"
-                        }
-
-                    },
-                    "commands": {
-                        "02_configure_Server": {
-                            "command": "/tmp/02_configureServer.sh"
-                        }
-                    }
-                },
-                "deploySampleApp":{
-                    "files" : {
-                        "/tmp/ferret-1.0.war": {
-                            "source": "http://repo1.maven.org/maven2/net/wasdev/wlp/sample/ferret/1.0/ferret-1.0.war",
-                            "mode"   : "000544",
-                            "owner"  : "root",
-                            "group"  : "root"
                         },
-                        "/tmp/03_deploySampleApp.sh": {
-                             "source": {
-                                    "Fn::Sub": 
-                                        "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/deploySampleApp.sh"
-                                        
-                                    
-                            },
-                 
-                            "mode": "000755",
-                            "owner": "root",
-                            "group": "root",
-                            "authentication": "S3AccessCreds"
-                        }    
+                        "commands": {
+                            "01_create_Server": {
+                                "command": "/tmp/01_create_liberty_server.sh"
+                            }
+                        }
                     },
-                    "commands": {
-                            
+                    "configure": {
+                        "files": {
+                            "/tmp/02_configureServer.sh": {
+                                "source": {
+                                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/configureServer.sh"
+                                },
+                                "mode": "000755",
+                                "owner": "root",
+                                "group": "root",
+                                "authentication": "S3AccessCreds"
+                            }
+                        },
+                        "commands": {
+                            "02_configure_Server": {
+                                "command": "/tmp/02_configureServer.sh"
+                            }
+                        }
+                    },
+                    "deploySampleApp": {
+                        "files": {
+                            "/tmp/ferret-1.0.war": {
+                                "source": "http://repo1.maven.org/maven2/net/wasdev/wlp/sample/ferret/1.0/ferret-1.0.war",
+                                "mode": "000544",
+                                "owner": "root",
+                                "group": "root"
+                            },
+                            "/tmp/03_deploySampleApp.sh": {
+                                "source": {
+                                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/deploySampleApp.sh"
+                                },
+                                "mode": "000755",
+                                "owner": "root",
+                                "group": "root",
+                                "authentication": "S3AccessCreds"
+                            }
+                        },
+                        "commands": {
                             "03_deploy_sample_app": {
                                 "command": "/tmp/03_deploySampleApp.sh"
                             }
-                    }
-
-                },
-                "startServer": {
-                    "files": {
-                        "/tmp/04_startServer.sh": {
-                            "source": {
-                                "Fn::Sub": 
-                                    "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/startServer.sh"
-                            },
-                 
-                            "mode": "000755",
-                            "owner": "root",
-                            "group": "root",
-                            "authentication": "S3AccessCreds"
                         }
-
                     },
-                    "commands": {
-                        "04_start_Server": {
-                            "command": "/tmp/04_startServer.sh"
+                    "startServer": {
+                        "files": {
+                            "/tmp/04_startServer.sh": {
+                                "source": {
+                                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/startServer.sh"
+                                },
+                                "mode": "000755",
+                                "owner": "root",
+                                "group": "root",
+                                "authentication": "S3AccessCreds"
+                            }
+                        },
+                        "commands": {
+                            "04_start_Server": {
+                                "command": "/tmp/04_startServer.sh"
+                            }
                         }
-                    }
+                    },
+                    "cleanup": {}
+                }
+            },
+            "Properties": {
+                "KeyName": {
+                    "Ref": "KeyPairName"
                 },
-
-                "cleanup": {}
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSAMIRegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMZNLINUXHVM"
+                    ]
+                },
+                "InstanceMonitoring": "true",
+                "IamInstanceProfile": {
+                    "Ref": "LibertyProfile"
+                },
+                "InstanceType": {
+                    "Ref": "LibertyInstanceType"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "LibertySecurityGroup"
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash\n",
+                                "export PATH=$PATH:/usr/local/bin\n",
+                                "which pip &> /dev/null\n",
+                                "if [ $? -ne 0 ] ; then\n",
+                                "    echo \"PIP NOT INSTALLED\"\n",
+                                "    [ `which yum` ] && $(yum install -y epel-release; yum install -y python-pip) && echo \"PIP INSTALLED\"\n",
+                                "    [ `which apt-get` ] && apt-get -y update && apt-get -y install python-pip && echo \"PIP INSTALLED\"\n",
+                                "fi\n",
+                                "pip install --upgrade pip &> /dev/null\n",
+                                "pip install awscli --ignore-installed six &> /dev/null\n",
+                                "easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
+                                "cfn-init --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                " --resource LibertyASLaunchConfig --configsets ",
+                                {
+                                    "Fn::If": [
+                                        "Sampleapp",
+                                        "quickstartwithSampleapp",
+                                        "quickstartwithoutSampleapp"
+                                    ]
+                                },
+                                " --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "# Signal the status from cfn-init\n",
+                                "cfn-signal -e $? --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                " --resource LibertyAutoScalingGroup --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
             }
         },
-        "Properties": {
-            "KeyName": {
-                "Ref": "KeyPairName"
-            },
-            "ImageId": {
-                "Fn::FindInMap": [
-                    "AWSAMIRegionMap",
-                    {
-                        "Ref": "AWS::Region"
-                    },
-                    "AMZNLINUXHVM"
-                ]
-            },
-             "InstanceMonitoring": "true",
-            "IamInstanceProfile": {
-                "Ref": "LibertyProfile"
-            },
-            "InstanceType": {
-                "Ref": "LibertyInstanceType"
-            },
-            "SecurityGroups": [
-                {
-                    "Ref": "LibertySecurityGroup"
-                }
-            ],
-            "UserData": {
-                 "Fn::Base64": {
-                    "Fn::Join": [
-                        "",
-                        [
-                            "#!/bin/bash\n",
-                            "export PATH=$PATH:/usr/local/bin\n",
-                            "which pip &> /dev/null\n",
-                            "if [ $? -ne 0 ] ; then\n",
-                            "    echo \"PIP NOT INSTALLED\"\n",
-                            "    [ `which yum` ] && $(yum install -y epel-release; yum install -y python-pip) && echo \"PIP INSTALLED\"\n",
-                            "    [ `which apt-get` ] && apt-get -y update && apt-get -y install python-pip && echo \"PIP INSTALLED\"\n",
-                            "fi\n",
-                            "pip install --upgrade pip &> /dev/null\n",
-                            "pip install awscli --ignore-installed six &> /dev/null\n",
-                            "easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
-                            "cfn-init --stack ",
-                            {
-                                "Ref": "AWS::StackName"
-                            },
-                            " --resource LibertyASLaunchConfig --configsets ",
-                            { 
-                                "Fn::If": [
-                                    "Sampleapp",
-                                    "quickstartwithSampleapp",
-                                    "quickstartwithoutSampleapp"
-                                ]   
-                            },
-                            " --region ",
-                            
-                            {
-                                 "Ref": "AWS::Region"
-                            },
-                            "\n",
-                            
-        
-                            "# Signal the status from cfn-init\n",
-                            "cfn-signal -e $? --stack ",
-                            {
-                                "Ref": "AWS::StackName"
-                            },
-                            " --resource LibertyAutoScalingGroup --region ",
-                            {
-                                "Ref": "AWS::Region"
-                            },
-                            "\n"
-                        ]
-                    ]
-                }
-            }
-        }
-    },
         "LibertyScaleUpPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
             "Properties": {
@@ -816,14 +781,16 @@
                 "DesiredCapacity": {
                     "Ref": "LibertyNodesDesiredCapacity"
                 },
-                "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ],
-
+                "TargetGroupARNs": [
+                    {
+                        "Ref": "ALBTargetGroup"
+                    }
+                ],
                 "HealthCheckGracePeriod": "600",
                 "HealthCheckType": "EC2",
                 "LaunchConfigurationName": {
                     "Ref": "LibertyASLaunchConfig"
                 },
-                
                 "MaxSize": {
                     "Ref": "LibertyNodesMaxSize"
                 },
@@ -859,48 +826,69 @@
                 }
             }
         },
-
-        "LibertyCloudFrontDistribution" : {
-            "Type" : "AWS::CloudFront::Distribution",
-            "Properties" : {
-                "DistributionConfig" : {
-                    "Origins" : [ {
-                            "DomainName" : { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "DNSName" ]},
-                            "Id" : "LibertyCustomOrigin",
-                            "CustomOriginConfig" : {
-                                "HTTPPort" : "80",
-                                "HTTPSPort" : "443",
-                                "OriginProtocolPolicy" : "http-only"
+        "LibertyCloudFrontDistribution": {
+            "Type": "AWS::CloudFront::Distribution",
+            "Properties": {
+                "DistributionConfig": {
+                    "Origins": [
+                        {
+                            "DomainName": {
+                                "Fn::GetAtt": [
+                                    "ApplicationLoadBalancer",
+                                    "DNSName"
+                                ]
+                            },
+                            "Id": "LibertyCustomOrigin",
+                            "CustomOriginConfig": {
+                                "HTTPPort": "80",
+                                "HTTPSPort": "443",
+                                "OriginProtocolPolicy": "http-only"
                             }
-                    } ],
-                    "Enabled" : "true",
-                    "DefaultCacheBehavior" : {
-                        "TargetOriginId" : "LibertyCustomOrigin",
-                        "SmoothStreaming" : "false",  
-                        "ForwardedValues" : {
-                            "QueryString" : "true",
-                            "Cookies" : { "Forward" : "all" }
+                        }
+                    ],
+                    "Enabled": "true",
+                    "DefaultCacheBehavior": {
+                        "TargetOriginId": "LibertyCustomOrigin",
+                        "SmoothStreaming": "false",
+                        "ForwardedValues": {
+                            "QueryString": "true",
+                            "Cookies": {
+                                "Forward": "all"
+                            }
                         },
-                        
-                        "ViewerProtocolPolicy" : "allow-all"
+                        "ViewerProtocolPolicy": "allow-all"
                     },
-                   "ViewerCertificate": { "CloudFrontDefaultCertificate" : "true" }
+                    "ViewerCertificate": {
+                        "CloudFrontDefaultCertificate": "true"
+                    }
                 }
             }
         }
-        
     },
-    "Outputs" : {
-    "WebsiteURL" : {
-      "Description" : "URL for newly created Liberty stack",
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "LibertyCloudFrontDistribution", "DomainName" ]},
-        "Fn::If": [
-            "Sampleapp",
-            "/ferret",
-            ""
-        ]
-
-      ]] }
+    "Outputs": {
+        "WebsiteURL": {
+            "Description": "URL for newly created Liberty stack",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "http://",
+                        {
+                            "Fn::GetAtt": [
+                                "LibertyCloudFrontDistribution",
+                                "DomainName"
+                            ]
+                        },
+                        {
+                            "Fn::If": [
+                                "Sampleapp",
+                                "/ferret",
+                                ""
+                            ]
+                        }
+                    ]
+                ]
+            }
+        }
     }
-  }  
 }
