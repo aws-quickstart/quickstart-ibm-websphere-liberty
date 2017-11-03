@@ -94,9 +94,24 @@
         }
     },
     "Parameters": {
-        "SampleAppRequired": {
-            "Default": "yes",
-            "Description": "Enter \"yes\" if you want the Quickstart to deploy a sample application and \"no\" if not",
+        "DeploySampleApp": {
+            "AllowedValues": [
+                "Yes",
+                "No"
+            ],
+            "ConstraintDescription": "Select Yes to create a deploy sample app",
+            "Default": "No",
+            "Description": "Select \"Yes\" to deploy a sample app, \"No\" to skip (default).",
+            "Type": "String"
+        },
+        "CreateCloudFrontDistribution": {
+            "AllowedValues": [
+                "Yes",
+                "No"
+            ],
+            "ConstraintDescription": "Select yes to create a CloudFront distribution",
+            "Default": "Yes",
+            "Description": "Select \"Yes\" to create a CloudFront distribution (default), \"No\" to skip.",
             "Type": "String"
         },
         "BastionSecurityGroupID": {
@@ -139,7 +154,7 @@
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "examples/latest/",
+            "Default": "ibm/websphere/liberty/latest/",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Type": "String"
         },
@@ -194,12 +209,20 @@
         }
     },
     "Conditions": {
-        "Sampleapp": {
+        "DeploySampleApp": {
             "Fn::Equals": [
                 {
-                    "Ref": "SampleAppRequired"
+                    "Ref": "DeploySampleApp"
                 },
-                "yes"
+                "Yes"
+            ]
+        },
+        "CreateCloudFrontDistribution": {
+            "Fn::Equals": [
+                {
+                    "Ref": "CreateCloudFrontDistribution"
+                },
+                "Yes"
             ]
         }
     },
@@ -666,7 +689,7 @@
                                 " --resource LibertyASLaunchConfig --configsets ",
                                 {
                                     "Fn::If": [
-                                        "Sampleapp",
+                                        "DeploySampleApp",
                                         "quickstartwithSampleapp",
                                         "quickstartwithoutSampleapp"
                                     ]
@@ -828,6 +851,7 @@
         },
         "LibertyCloudFrontDistribution": {
             "Type": "AWS::CloudFront::Distribution",
+            "Condition": "CreateCloudFrontDistribution",
             "Properties": {
                 "DistributionConfig": {
                     "Origins": [
@@ -874,14 +898,25 @@
                     [
                         "http://",
                         {
-                            "Fn::GetAtt": [
-                                "LibertyCloudFrontDistribution",
-                                "DomainName"
+                            "Fn::If": [
+                                "CreateCloudFrontDistribution",
+                                {
+                                    "Fn::GetAtt": [
+                                        "LibertyCloudFrontDistribution",
+                                        "DomainName"
+                                    ]
+                                },
+                                {
+                                    "Fn::GetAtt": [
+                                        "ApplicationLoadBalancer",
+                                        "DNSName"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "Fn::If": [
-                                "Sampleapp",
+                                "DeploySampleApp",
                                 "/ferret",
                                 ""
                             ]
