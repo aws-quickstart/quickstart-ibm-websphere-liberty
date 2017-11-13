@@ -20,13 +20,12 @@
                 },
                 {
                     "Label": {
-                        "default": "Amazon EC2 Configuration"
+                        "default": "Bastion Host Configuration"
                     },
                     "Parameters": [
                         "KeyPairName",
                         "BastionAMIOS",
-                        "BastionInstanceType",
-                        "LibertyInstanceType"
+                        "BastionInstanceType"  
                     ]
                 },
                 {
@@ -34,8 +33,10 @@
                         "default": "Liberty Nodes Configuration"
                     },
                     "Parameters": [
+                        "LibertyInstanceType",
                         "LibertyNodesMinSize",
                         "LibertyNodesMaxSize",
+                        "LibertyNodesDesiredCapacity",
                         "OperatorEmail"
                     ]
                 },
@@ -90,7 +91,7 @@
                     "default": "VPC CIDR"
                 },
                 "LibertyInstanceType": {
-                    "default": "Liberty Servers Instance Type"
+                    "default": "Liberty Server Instance Type"
                 },
                 "LibertyNodesDesiredCapacity": {
                     "default": "Liberty Nodes Desired Capacity"
@@ -101,8 +102,11 @@
                 "LibertyNodesMinSize": {
                     "default": "Liberty Nodes Min Size"
                 },
-                "SampleAppRequired": {
-                    "default": "Sample Application to be deployed?"
+                "CreateCloudFrontDistribution": {
+                    "default": "Create a CloudFront Distribution?"
+                },
+                "DeploySampleApp":{
+                    "default": "Deploy Sample Application?"
                 }
             }
         }

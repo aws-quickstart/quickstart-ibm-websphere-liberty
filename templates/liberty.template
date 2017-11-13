@@ -18,12 +18,11 @@
                 },
                 {
                     "Label": {
-                        "default": "Amazon EC2 Configuration"
+                        "default": "Bastion Host Details" 
                     },
                     "Parameters": [
                         "KeyPairName",
-                        "BastionSecurityGroupID",
-                        "LibertyInstanceType"
+                        "BastionSecurityGroupID"
                     ]
                 },
                 {
@@ -31,6 +30,7 @@
                         "default": "Liberty Nodes Configuration"
                     },
                     "Parameters": [
+                        "LibertyInstanceType",
                         "LibertyNodesMinSize",
                         "LibertyNodesMaxSize",
                         "LibertyNodesDesiredCapacity",
@@ -89,6 +89,12 @@
                 },
                 "LibertyNodesMinSize": {
                     "default": "Liberty Nodes Min Size"
+                },
+                "CreateCloudFrontDistribution": {
+                    "default": "Create a CloudFront Distribution?"
+                },
+                "DeploySampleApp":{
+                    "default": "Deploy Sample Application?"
                 }
             }
         }
@@ -164,6 +170,10 @@
         },
         "LibertyInstanceType": {
             "AllowedValues": [
+                "t2.nano",
+                "t2.micro",
+                "t2.small",
+                "t2.medium",
                 "t2.large",
                 "m4.large",
                 "m4.xlarge",
@@ -188,7 +198,7 @@
                 "r3.xlarge"
             ],
             "ConstraintDescription": "Must contain valid instance type",
-            "Default": "m4.xlarge",
+            "Default": "t2.micro",
             "Description": "Type of EC2 instance for the Liberty instances",
             "Type": "String"
         },
