@@ -1,4 +1,4 @@
-	{
+{
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "This Liberty template deploys an ASG behind an ELB load balancer in two private subnets. The cluster is configured to use an S3 bucket for storage **WARNING** This template creates EC2 instances and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
     "Metadata": {
@@ -6,19 +6,16 @@
             "ParameterGroups": [
                 {
                     "Label": {
-                        "default": "Network Configuration"
+                        "default": "AWS Quick Start Configuration"
                     },
                     "Parameters": [
-                        "VPCID",
-                        "PrivateSubnet1ID",
-                        "PrivateSubnet2ID",
-                        "PublicSubnet1ID",
-                        "PublicSubnet2ID"
+                        "QSS3BucketName",
+                        "QSS3KeyPrefix"
                     ]
                 },
                 {
                     "Label": {
-                        "default": "Bastion Host Details" 
+                        "default": "Bastion Host Details"
                     },
                     "Parameters": [
                         "KeyPairName",
@@ -34,16 +31,20 @@
                         "LibertyNodesMinSize",
                         "LibertyNodesMaxSize",
                         "LibertyNodesDesiredCapacity",
-                        "OperatorEmail"
+                        "OperatorEmail",
+                        "SSLCertificateId"
                     ]
                 },
                 {
                     "Label": {
-                        "default": "AWS Quick Start Configuration"
+                        "default": "Network Configuration"
                     },
                     "Parameters": [
-                        "QSS3BucketName",
-                        "QSS3KeyPrefix"
+                        "VPCID",
+                        "PrivateSubnet1ID",
+                        "PrivateSubnet2ID",
+                        "PublicSubnet1ID",
+                        "PublicSubnet2ID"
                     ]
                 }
             ],
@@ -51,8 +52,26 @@
                 "BastionSecurityGroupID": {
                     "default": "Bastion Security Group ID"
                 },
+                "CreateCloudFrontDistribution": {
+                    "default": "Create a CloudFront Distribution?"
+                },
+                "DeploySampleApp": {
+                    "default": "Deploy Sample Application?"
+                },
                 "KeyPairName": {
                     "default": "SSH Key Name"
+                },
+                "LibertyInstanceType": {
+                    "default": "Liberty Servers Instance Type"
+                },
+                "LibertyNodesDesiredCapacity": {
+                    "default": "Liberty Nodes Desired Capacity"
+                },
+                "LibertyNodesMaxSize": {
+                    "default": "Liberty Nodes Max Size"
+                },
+                "LibertyNodesMinSize": {
+                    "default": "Liberty Nodes Min Size"
                 },
                 "OperatorEmail": {
                     "default": "Operator Email"
@@ -75,40 +94,19 @@
                 "QSS3KeyPrefix": {
                     "default": "Quick Start S3 Key Prefix"
                 },
+                "SSLCertificateId": {
+                    "default": "SSL certificate ARN"
+                },
                 "VPCID": {
                     "default": "VPC ID"
-                },
-                "LibertyInstanceType": {
-                    "default": "Liberty Servers Instance Type"
-                },
-                "LibertyNodesDesiredCapacity": {
-                    "default": "Liberty Nodes Desired Capacity"
-                },
-                "LibertyNodesMaxSize": {
-                    "default": "Liberty Nodes Max Size"
-                },
-                "LibertyNodesMinSize": {
-                    "default": "Liberty Nodes Min Size"
-                },
-                "CreateCloudFrontDistribution": {
-                    "default": "Create a CloudFront Distribution?"
-                },
-                "DeploySampleApp":{
-                    "default": "Deploy Sample Application?"
                 }
             }
         }
     },
     "Parameters": {
-        "DeploySampleApp": {
-            "AllowedValues": [
-                "Yes",
-                "No"
-            ],
-            "ConstraintDescription": "Select Yes to create a deploy sample app",
-            "Default": "No",
-            "Description": "Select \"Yes\" to deploy a sample app, \"No\" to skip (default).",
-            "Type": "String"
+        "BastionSecurityGroupID": {
+            "Description": "ID of the bastion host security group to enable SSH connections (e.g., sg-7f16e910)",
+            "Type": "AWS::EC2::SecurityGroup::Id"
         },
         "CreateCloudFrontDistribution": {
             "AllowedValues": [
@@ -120,53 +118,19 @@
             "Description": "Select \"Yes\" to create a CloudFront distribution (default), \"No\" to skip.",
             "Type": "String"
         },
-        "BastionSecurityGroupID": {
-            "Description": "ID of the bastion host security group to enable SSH connections (e.g., sg-7f16e910)",
-            "Type": "AWS::EC2::SecurityGroup::Id"
+        "DeploySampleApp": {
+            "AllowedValues": [
+                "Yes",
+                "No"
+            ],
+            "ConstraintDescription": "Select Yes to create a deploy sample app",
+            "Default": "No",
+            "Description": "Select \"Yes\" to deploy a sample app, \"No\" to skip (default).",
+            "Type": "String"
         },
         "KeyPairName": {
             "Description": "Name of an existing EC2 key pair. All instances will launch with this key pair.",
             "Type": "AWS::EC2::KeyPair::KeyName"
-        },
-        "OperatorEmail": {
-            "AllowedPattern": "([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)",
-            "ConstraintDescription": "Must be a valid email address.",
-            "Description": "Email address that notifications of any scaling operations will be sent to",
-            "Type": "String"
-        },
-        "PrivateSubnet1ID": {
-            "Description": "ID of private subnet 1 in Availability Zone 1 for the Liberty (e.g., subnet-a0246dcd)",
-            "Type": "AWS::EC2::Subnet::Id"
-        },
-        "PrivateSubnet2ID": {
-            "Description": "ID of private subnet 2 in Availability Zone 2 for the Liberty (e.g., subnet-b1f432cd)",
-            "Type": "AWS::EC2::Subnet::Id"
-        },
-        "PublicSubnet1ID": {
-            "Description": "ID of public subnet 1 in Availability Zone 1 for the ELB load balancer (e.g., subnet-9bc642ac)",
-            "Type": "AWS::EC2::Subnet::Id"
-        },
-        "PublicSubnet2ID": {
-            "Description": "ID of public subnet 2 in Availability Zone 2 for the ELB load balancer (e.g., subnet-e3246d8e)",
-            "Type": "AWS::EC2::Subnet::Id"
-        },
-        "QSS3BucketName": {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Default": "quickstart-reference",
-            "Description": "S3 bucket name for the Quick Start assets. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Type": "String"
-        },
-        "QSS3KeyPrefix": {
-            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
-            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "ibm/websphere/liberty/latest/",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Type": "String"
-        },
-        "VPCID": {
-            "Description": "ID of your existing VPC for deployment",
-            "Type": "AWS::EC2::VPC::Id"
         },
         "LibertyInstanceType": {
             "AllowedValues": [
@@ -216,9 +180,62 @@
             "Default": "2",
             "Description": "The minimum size of the Auto Scaling group",
             "Type": "String"
+        },
+        "OperatorEmail": {
+            "AllowedPattern": "([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)",
+            "ConstraintDescription": "Must be a valid email address.",
+            "Description": "Email address that notifications of any scaling operations will be sent to",
+            "Type": "String"
+        },
+        "PrivateSubnet1ID": {
+            "Description": "ID of private subnet 1 in Availability Zone 1 for the Liberty (e.g., subnet-a0246dcd)",
+            "Type": "AWS::EC2::Subnet::Id"
+        },
+        "PrivateSubnet2ID": {
+            "Description": "ID of private subnet 2 in Availability Zone 2 for the Liberty (e.g., subnet-b1f432cd)",
+            "Type": "AWS::EC2::Subnet::Id"
+        },
+        "PublicSubnet1ID": {
+            "Description": "ID of public subnet 1 in Availability Zone 1 for the ELB load balancer (e.g., subnet-9bc642ac)",
+            "Type": "AWS::EC2::Subnet::Id"
+        },
+        "PublicSubnet2ID": {
+            "Description": "ID of public subnet 2 in Availability Zone 2 for the ELB load balancer (e.g., subnet-e3246d8e)",
+            "Type": "AWS::EC2::Subnet::Id"
+        },
+        "QSS3BucketName": {
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Default": "quickstart-reference",
+            "Description": "S3 bucket name for the Quick Start assets. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Type": "String"
+        },
+        "QSS3KeyPrefix": {
+            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Default": "ibm/websphere/liberty/latest/",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Type": "String"
+        },
+        "SSLCertificateId": {
+            "Default": "",
+            "Description": "(Optional) The ARN of the SSL certificate to use for the webserver",
+            "Type": "String"
+        },
+        "VPCID": {
+            "Description": "ID of your existing VPC for deployment",
+            "Type": "AWS::EC2::VPC::Id"
         }
     },
     "Conditions": {
+        "CreateCloudFrontDistribution": {
+            "Fn::Equals": [
+                {
+                    "Ref": "CreateCloudFrontDistribution"
+                },
+                "Yes"
+            ]
+        },
         "DeploySampleApp": {
             "Fn::Equals": [
                 {
@@ -227,12 +244,16 @@
                 "Yes"
             ]
         },
-        "CreateCloudFrontDistribution": {
-            "Fn::Equals": [
+        "UseSSL": {
+            "Fn::Not": [
                 {
-                    "Ref": "CreateCloudFrontDistribution"
-                },
-                "Yes"
+                    "Fn::Equals": [
+                        {
+                            "Ref": "SSLCertificateId"
+                        },
+                        ""
+                    ]
+                }
             ]
         }
     },
@@ -349,16 +370,22 @@
                 },
                 "SecurityGroupIngress": [
                     {
-                        "IpProtocol": "tcp",
-                        "FromPort": "80",
-                        "ToPort": "80",
-                        "CidrIp": "0.0.0.0/0"
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "443",
-                        "ToPort": "443",
-                        "CidrIp": "0.0.0.0/0"
+                        "Fn::If" :
+                        [
+                            "UseSSL",
+                            {
+                             "IpProtocol": "tcp",
+                                "FromPort": "443",
+                                "ToPort": "443",
+                                "CidrIp": "0.0.0.0/0"                                
+                            },
+                            {
+                                "IpProtocol": "tcp",
+                                "FromPort": "80",
+                                "ToPort": "80",
+                                "CidrIp": "0.0.0.0/0"
+                            }
+                        ]
                     }
                 ]
             }
@@ -395,8 +422,35 @@
                 "LoadBalancerArn": {
                     "Ref": "ApplicationLoadBalancer"
                 },
-                "Port": "80",
-                "Protocol": "HTTP"
+                "Port": {
+                    "Fn::If": [
+                        "UseSSL",
+                        443,
+                        80
+                    ]
+                },
+                "Protocol": {
+                    "Fn::If": [
+                        "UseSSL",
+                        "HTTPS",
+                        "HTTP"
+                    ]
+                },
+                "Certificates": [
+                    {
+                        "Fn::If": [
+                            "UseSSL",
+                            {
+                                "CertificateArn": {
+                                    "Ref": "SSLCertificateId"
+                                }
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    }
+                ]
             }
         },
         "ALBTargetGroup": {
@@ -405,8 +459,20 @@
                 "HealthCheckIntervalSeconds": 30,
                 "HealthCheckTimeoutSeconds": 5,
                 "HealthyThresholdCount": 2,
-                "Port": 9080,
-                "Protocol": "HTTP",
+                "Port": {
+                    "Fn::If": [
+                        "UseSSL",
+                        9443,
+                        9080
+                    ]
+                },
+                "Protocol": {
+                    "Fn::If": [
+                        "UseSSL",
+                        "HTTPS",
+                        "HTTP"
+                    ]
+                },
                 "UnhealthyThresholdCount": 5,
                 "VpcId": {
                     "Ref": "VPCID"
@@ -463,21 +529,8 @@
                             ]
                         },
                         "PolicyName": "aws-quick-start-s3-policy"
-                    },
-                    {
-                        "PolicyName": "LibertySetup",
-                        "PolicyDocument": {
-                            "Statement": {
-                                "Effect": "Allow",
-                                "Action": [
-                                    "cloudwatch:PutMetricData",
-                                    "cloudwatch:EnableAlarmActions",
-                                    "cloudwatch:PutMetricAlarm"
-                                ],
-                                "Resource": "*"
-                            }
-                        }
                     }
+                    
                 ]
             }
         },
@@ -501,12 +554,26 @@
                 },
                 "SecurityGroupIngress": [
                     {
-                        "IpProtocol": "tcp",
-                        "FromPort": "9080",
-                        "ToPort": "9080",
-                        "SourceSecurityGroupId": {
-                            "Ref": "ELBSecurityGroup"
-                        }
+                        "Fn::If": [
+                            "UseSSL",
+                            {
+                                "IpProtocol": "tcp",
+                                "FromPort": "9443",
+                                "ToPort": "9443",
+                                "SourceSecurityGroupId": {
+                                    "Ref": "ELBSecurityGroup"
+                                }                               
+                            },
+                            {
+                                
+                                 "IpProtocol": "tcp",
+                                "FromPort": "9080",
+                                "ToPort": "9080",
+                                "SourceSecurityGroupId": {
+                                    "Ref": "ELBSecurityGroup"
+                                }
+                            }
+                        ]  
                     },
                     {
                         "IpProtocol": "tcp",
@@ -537,15 +604,26 @@
                 },
                 "AWS::CloudFormation::Init": {
                     "configSets": {
+                        "quickstart": [
+                            "install",
+                            "configure",
+                            "startServer"
+                        ],
+                        "quickstartwithSSL": [
+                            "install",
+                            "configureSSL",
+                            "startServer"
+                        ],
                         "quickstartwithSampleapp": [
                             "install",
                             "configure",
                             "deploySampleApp",
                             "startServer"
                         ],
-                        "quickstartwithoutSampleapp": [
+                        "quickstartwithSSLandSampleapp": [
                             "install",
-                            "configure",
+                            "configureSSL",
+                            "deploySampleApp",
                             "startServer"
                         ]
                     },
@@ -603,6 +681,24 @@
                         "commands": {
                             "02_configure_Server": {
                                 "command": "/tmp/02_configureServer.sh"
+                            }
+                        }
+                    },
+                    "configureSSL": {
+                        "files": {
+                            "/tmp/02_configureServerSSL.sh": {
+                                "source": {
+                                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/configureServerSSL.sh"
+                                },
+                                "mode": "000755",
+                                "owner": "root",
+                                "group": "root",
+                                "authentication": "S3AccessCreds"
+                            }
+                        },
+                        "commands": {
+                            "02_configure_Server": {
+                                "command": "/tmp/02_configureServerSSL.sh"
                             }
                         }
                     },
@@ -699,9 +795,21 @@
                                 " --resource LibertyASLaunchConfig --configsets ",
                                 {
                                     "Fn::If": [
-                                        "DeploySampleApp",
-                                        "quickstartwithSampleapp",
-                                        "quickstartwithoutSampleapp"
+                                        "UseSSL",
+                                        {
+                                            "Fn::If": [
+                                                "DeploySampleApp",
+                                                "quickstartwithSSLandSampleapp",
+                                                "quickstartwithSSL"
+                                            ]
+                                        },
+                                        {
+                                            "Fn::If": [
+                                                "DeploySampleApp",
+                                                "quickstartwithSampleapp",
+                                                "quickstart"
+                                            ]
+                                        }
                                     ]
                                 },
                                 " --region ",
@@ -725,78 +833,20 @@
                 }
             }
         },
-        "LibertyScaleUpPolicy": {
+        "LibertyTargetTrackingScalingPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
             "Properties": {
-                "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": {
                     "Ref": "LibertyAutoScalingGroup"
                 },
-                "Cooldown": "300",
-                "ScalingAdjustment": "1"
-            }
-        },
-        "LibertyScaleDownPolicy": {
-            "Type": "AWS::AutoScaling::ScalingPolicy",
-            "Properties": {
-                "AdjustmentType": "ChangeInCapacity",
-                "AutoScalingGroupName": {
-                    "Ref": "LibertyAutoScalingGroup"
-                },
-                "Cooldown": "300",
-                "ScalingAdjustment": "-1"
-            }
-        },
-        "CPUAlarmHigh": {
-            "Type": "AWS::CloudWatch::Alarm",
-            "Properties": {
-                "AlarmDescription": "Scale-up if CPU > 60% for 5 minutes",
-                "MetricName": "CPUUtilization",
-                "Namespace": "AWS/EC2",
-                "Statistic": "Average",
-                "Period": "60",
-                "EvaluationPeriods": "5",
-                "Threshold": "60",
-                "AlarmActions": [
-                    {
-                        "Ref": "LibertyScaleUpPolicy"
-                    }
-                ],
-                "Dimensions": [
-                    {
-                        "Name": "AutoScalingGroupName",
-                        "Value": {
-                            "Ref": "LibertyAutoScalingGroup"
-                        }
-                    }
-                ],
-                "ComparisonOperator": "GreaterThanThreshold"
-            }
-        },
-        "CPUAlarmLow": {
-            "Type": "AWS::CloudWatch::Alarm",
-            "Properties": {
-                "AlarmDescription": "Scale-down if CPU < 40% for 30 minutes",
-                "MetricName": "CPUUtilization",
-                "Namespace": "AWS/EC2",
-                "Statistic": "Average",
-                "Period": "60",
-                "EvaluationPeriods": "30",
-                "Threshold": "40",
-                "AlarmActions": [
-                    {
-                        "Ref": "LibertyScaleDownPolicy"
-                    }
-                ],
-                "Dimensions": [
-                    {
-                        "Name": "AutoScalingGroupName",
-                        "Value": {
-                            "Ref": "LibertyAutoScalingGroup"
-                        }
-                    }
-                ],
-                "ComparisonOperator": "LessThanThreshold"
+                "Cooldown": "60",
+                "PolicyType": "TargetTrackingScaling",
+                "TargetTrackingConfiguration": {
+                    "PredefinedMetricSpecification": {
+                        "PredefinedMetricType": "ASGAverageCPUUtilization"
+                    },
+                    "TargetValue": 75
+                }
             }
         },
         "LibertyAutoScalingGroup": {
@@ -810,7 +860,7 @@
                         "Ref": "PrivateSubnet2ID"
                     }
                 ],
-                "Cooldown": "600",
+                "Cooldown": "300",
                 "DesiredCapacity": {
                     "Ref": "LibertyNodesDesiredCapacity"
                 },
@@ -819,7 +869,7 @@
                         "Ref": "ALBTargetGroup"
                     }
                 ],
-                "HealthCheckGracePeriod": "600",
+                "HealthCheckGracePeriod": "300",
                 "HealthCheckType": "EC2",
                 "LaunchConfigurationName": {
                     "Ref": "LibertyASLaunchConfig"
@@ -876,7 +926,13 @@
                             "CustomOriginConfig": {
                                 "HTTPPort": "80",
                                 "HTTPSPort": "443",
-                                "OriginProtocolPolicy": "http-only"
+                                "OriginProtocolPolicy": {
+                                    "Fn::If": [
+                                        "UseSSL",
+                                        "https-only",
+                                        "http-only"
+                                    ]
+                                }
                             }
                         }
                     ],
@@ -890,7 +946,13 @@
                                 "Forward": "all"
                             }
                         },
-                        "ViewerProtocolPolicy": "allow-all"
+                        "ViewerProtocolPolicy": {
+                            "Fn::If": [
+                                "UseSSL",
+                                "https-only",
+                                "allow-all"
+                            ]
+                        }
                     },
                     "ViewerCertificate": {
                         "CloudFrontDefaultCertificate": "true"
@@ -906,7 +968,13 @@
                 "Fn::Join": [
                     "",
                     [
-                        "http://",
+                        {
+                            "Fn::If": [
+                                "UseSSL",
+                                "https://",
+                                "http://"
+                            ]
+                        },
                         {
                             "Fn::If": [
                                 "CreateCloudFrontDistribution",

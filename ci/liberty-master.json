@@ -2,11 +2,7 @@
     {
         "ParameterKey": "AvailabilityZones",
         "ParameterValue": "$[alfred_genaz_2]"
-    },
-    {
-        "ParameterKey": "VPCCIDR",
-        "ParameterValue": "10.0.0.0/16"
-    },
+    },   
     {
         "ParameterKey": "BastionAMIOS",
         "ParameterValue": "Amazon-Linux-HVM"
@@ -16,13 +12,17 @@
         "ParameterValue": "t2.micro"
     },
     {
-        "ParameterKey": "KeyPairName",
-        "ParameterValue": "$[alfred_getkeypair]"
+        "ParameterKey": "CreateCloudFrontDistribution",
+        "ParameterValue": "Yes"
     },
     {
-        "ParameterKey": "RemoteAccessCIDR",
-        "ParameterValue": "10.0.0.0/16"
+        "ParameterKey": "DeploySampleApp",
+        "ParameterValue": "No"
     },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "madKeyPair"
+    },  
     {
         "ParameterKey": "LibertyInstanceType",
         "ParameterValue": "t2.large"
@@ -42,13 +42,17 @@
     {
         "ParameterKey": "OperatorEmail",
         "ParameterValue": "foo@example.com"
+    },   
+    {
+        "ParameterKey": "RemoteAccessCIDR",
+        "ParameterValue": "10.0.0.0/16"
     },
     {
-        "ParameterKey": "DeploySampleApp",
-        "ParameterValue": "No"
+        "ParameterKey": "SSLCertificateId",
+        "ParameterValue": ""
     },
     {
-        "ParameterKey": "CreateCloudFrontDistribution",
-        "ParameterValue": "Yes"
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.0.0.0/16"
     }
 ]
