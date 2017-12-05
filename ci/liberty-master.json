@@ -21,7 +21,7 @@
     },
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "madKeyPair"
+        "ParameterValue": "$[alfred_getkeypair]"
     },  
     {
         "ParameterKey": "LibertyInstanceType",
