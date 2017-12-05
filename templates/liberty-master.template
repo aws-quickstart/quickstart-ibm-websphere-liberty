@@ -415,9 +415,6 @@
                     "OperatorEmail": {
                         "Ref": "OperatorEmail"
                     },
-                    "SSLCertificateId": {
-                        "Ref": "SSLCertificateId"
-                    },
                     "PrivateSubnet1ID": {
                         "Fn::GetAtt": [
                             "VPCStack",
