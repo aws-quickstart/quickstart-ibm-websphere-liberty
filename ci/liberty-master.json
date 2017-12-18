@@ -1,5 +1,9 @@
 [
     {
+        "ParameterKey": "ALBCertificateARN",
+        "ParameterValue": ""
+    },
+    {
         "ParameterKey": "AvailabilityZones",
         "ParameterValue": "$[alfred_genaz_2]"
     },   
@@ -12,6 +16,10 @@
         "ParameterValue": "t2.micro"
     },
     {
+        "ParameterKey": "CloudFrontACMCertificateARN",
+        "ParameterValue": ""
+    },
+    {
         "ParameterKey": "CreateCloudFrontDistribution",
         "ParameterValue": "Yes"
     },
@@ -20,8 +28,12 @@
         "ParameterValue": "No"
     },
     {
+        "ParameterKey": "HostedZoneName",
+        "ParameterValue": ""
+    },
+    {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "$[alfred_getkeypair]"
+        "ParameterValue": "madKeyPair"
     },  
     {
         "ParameterKey": "LibertyInstanceType",
@@ -46,10 +58,6 @@
     {
         "ParameterKey": "RemoteAccessCIDR",
         "ParameterValue": "10.0.0.0/16"
-    },
-    {
-        "ParameterKey": "SSLCertificateId",
-        "ParameterValue": ""
     },
     {
         "ParameterKey": "VPCCIDR",
