@@ -64,7 +64,7 @@
                 "BastionSecurityGroupID": {
                     "default": "Bastion Security Group ID"
                 },
-                "CloudFrontACMCertificateARN":{
+                "CloudFrontACMCertificateARN": {
                     "default": "ARN of ACM Certificate for CloudFront"
                 },
                 "CreateCloudFrontDistribution": {
@@ -111,7 +111,7 @@
                 },
                 "QSS3KeyPrefix": {
                     "default": "Quick Start S3 Key Prefix"
-                },               
+                },
                 "VPCID": {
                     "default": "VPC ID"
                 }
@@ -141,7 +141,7 @@
         "CloudFrontACMCertificateARN": {
             "AllowedPattern": "^$|(arn:aws:acm:)([a-z0-9/:-])*([a-z0-9])$",
             "Description": "[ Optional ] The AWS Certification Manager certificate ARN for the CloudFront distribution certificate - this certificate should be created in the us-east-1 (N. Virginia) region and must reference the main domain name you use below.",
-            "Default":"",
+            "Default": "",
             "Type": "String"
         },
         "DeploySampleApp": {
@@ -154,10 +154,10 @@
             "Description": "Select \"Yes\" to deploy a sample app, \"No\" to skip (default).",
             "Type": "String"
         },
-       "HostedZoneName": {
+        "HostedZoneName": {
             "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
             "Description": "The domain name of a valid Hosted Zone on AWS.",
-            "Default":"",
+            "Default": "",
             "Type": "String"
         },
         "KeyPairName": {
@@ -249,8 +249,8 @@
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Type": "String"
         },
-        "StackName":{
-            "Default": "AWS::StackName", 
+        "StackName": {
+            "Default": "AWS::StackName",
             "Type": "String"
         },
         "VPCID": {
@@ -299,7 +299,6 @@
                 }
             ]
         }
-        
     },
     "Rules": {
         "KeyPairsNotEmpty": {
@@ -345,49 +344,49 @@
     "Mappings": {
         "AWSAMIRegionMap": {
             "AMI": {
-                "AMZNLINUXHVM": "amzn-ami-hvm-2017.09.1.20171103-x86_64-gp2"
+                "AMZNLINUXHVM": "amzn-ami-hvm-2017.09.1.20171120-x86_64-gp2"
             },
             "ap-northeast-1": {
-                "AMZNLINUXHVM": "ami-2803ac4e"
+                "AMZNLINUXHVM": "ami-da9e2cbc"
             },
             "ap-northeast-2": {
-                "AMZNLINUXHVM": "ami-fc862292"
+                "AMZNLINUXHVM": "ami-1196317f"
             },
             "ap-south-1": {
-                "AMZNLINUXHVM": "ami-2ed19c41"
+                "AMZNLINUXHVM": "ami-d5c18eba"
             },
             "ap-southeast-1": {
-                "AMZNLINUXHVM": "ami-dd7935be"
+                "AMZNLINUXHVM": "ami-c63d6aa5"
             },
             "ap-southeast-2": {
-                "AMZNLINUXHVM": "ami-1a668878"
+                "AMZNLINUXHVM": "ami-ff4ea59d"
             },
             "ca-central-1": {
-                "AMZNLINUXHVM": "ami-ef3b838b"
+                "AMZNLINUXHVM": "ami-d29e25b6"
             },
             "eu-central-1": {
-                "AMZNLINUXHVM": "ami-e28d098d"
+                "AMZNLINUXHVM": "ami-bf2ba8d0"
             },
             "eu-west-1": {
-                "AMZNLINUXHVM": "ami-760aaa0f"
+                "AMZNLINUXHVM": "ami-1a962263"
             },
             "eu-west-2": {
-                "AMZNLINUXHVM": "ami-e3051987"
+                "AMZNLINUXHVM": "ami-e7d6c983"
             },
             "sa-east-1": {
-                "AMZNLINUXHVM": "ami-1678037a"
+                "AMZNLINUXHVM": "ami-286f2a44"
             },
             "us-east-1": {
-                "AMZNLINUXHVM": "ami-6057e21a"
+                "AMZNLINUXHVM": "ami-55ef662f"
             },
             "us-east-2": {
-                "AMZNLINUXHVM": "ami-aa1b34cf"
+                "AMZNLINUXHVM": "ami-15e9c770"
             },
             "us-west-1": {
-                "AMZNLINUXHVM": "ami-1a033c7a"
+                "AMZNLINUXHVM": "ami-a51f27c5"
             },
             "us-west-2": {
-                "AMZNLINUXHVM": "ami-32d8124a"
+                "AMZNLINUXHVM": "ami-bf4193c7"
             }
         }
     },
@@ -414,14 +413,13 @@
                 },
                 "SecurityGroupIngress": [
                     {
-                        "Fn::If" :
-                        [
+                        "Fn::If": [
                             "UseALBSSL",
                             {
-                             "IpProtocol": "tcp",
+                                "IpProtocol": "tcp",
                                 "FromPort": "443",
                                 "ToPort": "443",
-                                "CidrIp": "0.0.0.0/0"                                
+                                "CidrIp": "0.0.0.0/0"
                             },
                             {
                                 "IpProtocol": "tcp",
@@ -574,7 +572,6 @@
                         },
                         "PolicyName": "aws-quick-start-s3-policy"
                     }
-                    
                 ]
             }
         },
@@ -606,18 +603,17 @@
                                 "ToPort": "9443",
                                 "SourceSecurityGroupId": {
                                     "Ref": "ELBSecurityGroup"
-                                }                               
+                                }
                             },
                             {
-                                
-                                 "IpProtocol": "tcp",
+                                "IpProtocol": "tcp",
                                 "FromPort": "9080",
                                 "ToPort": "9080",
                                 "SourceSecurityGroupId": {
                                     "Ref": "ELBSecurityGroup"
                                 }
                             }
-                        ]  
+                        ]
                     },
                     {
                         "IpProtocol": "tcp",
@@ -962,7 +958,7 @@
                 },
                 "Parameters": {
                     "UseSSL": {
-                        "Fn::If":[
+                        "Fn::If": [
                             "UseALBSSL",
                             "Yes",
                             ""
@@ -975,7 +971,7 @@
                         "Ref": "HostedZoneName"
                     },
                     "ALBDNSName": {
-                        "Fn::GetAtt":[
+                        "Fn::GetAtt": [
                             "ApplicationLoadBalancer",
                             "DNSName"
                         ]
@@ -983,11 +979,10 @@
                     "StackName": {
                         "Ref": "StackName"
                     }
-
                 }
             }
         },
-        "Route53Stack":{
+        "Route53Stack": {
             "Type": "AWS::CloudFormation::Stack",
             "Condition": "UseALBSSL",
             "Properties": {
@@ -996,34 +991,32 @@
                 },
                 "Parameters": {
                     "UseACMCertificate": {
-                        "Fn::If":[
+                        "Fn::If": [
                             "UseCustomCloudFrontSSL",
                             "Yes",
                             "No"
                         ]
                     },
-                    "LibertyCloudFrontDistribution":{
+                    "LibertyCloudFrontDistribution": {
                         "Fn::GetAtt": [
                             "CloudFrontStack",
                             "Outputs.CloudFrontDomainName"
                         ]
-
                     },
                     "HostedZoneName": {
                         "Ref": "HostedZoneName"
                     },
                     "ALBDNSName": {
-                        "Fn::GetAtt":[
+                        "Fn::GetAtt": [
                             "ApplicationLoadBalancer",
                             "DNSName"
                         ]
                     },
-                    "CanonicalHostedZoneID":{
-                        "Fn::GetAtt":[
+                    "CanonicalHostedZoneID": {
+                        "Fn::GetAtt": [
                             "ApplicationLoadBalancer",
                             "CanonicalHostedZoneID"
                         ]
-
                     },
                     "StackName": {
                         "Ref": "StackName"
@@ -1031,17 +1024,16 @@
                 }
             }
         }
-
     },
     "Outputs": {
         "WebsiteURL": {
             "Description": "URL for newly created Liberty stack",
             "Value": {
-                "Fn::Join":[
+                "Fn::Join": [
                     "",
                     [
                         {
-                            "Fn::If":[
+                            "Fn::If": [
                                 "CreateCloudFrontDistribution",
                                 {
                                     "Fn::GetAtt": [
@@ -1050,10 +1042,10 @@
                                     ]
                                 },
                                 {
-                                    "Fn::If":[
+                                    "Fn::If": [
                                         "UseALBSSL",
                                         {
-                                            "Fn::Join":[
+                                            "Fn::Join": [
                                                 "",
                                                 [
                                                     "https://",
@@ -1061,15 +1053,15 @@
                                                         "Fn::Join": [
                                                             "",
                                                             [
-                                                                { 
-                                                                    "Fn::Select" : 
-                                                                    [ 
-                                                                        "0", 
-                                                                        { 
-                                                                            "Fn::Split": [".", 
+                                                                {
+                                                                    "Fn::Select": [
+                                                                        "0",
+                                                                        {
+                                                                            "Fn::Split": [
+                                                                                ".",
                                                                                 {
                                                                                     "Fn::GetAtt": [
-                                                                                      "ApplicationLoadBalancer",
+                                                                                        "ApplicationLoadBalancer",
                                                                                         "DNSName"
                                                                                     ]
                                                                                 }
@@ -1084,14 +1076,12 @@
                                                                 "."
                                                             ]
                                                         ]
-                                                        
                                                     }
                                                 ]
-                    
                                             ]
                                         },
                                         {
-                                            "Fn::Join":[
+                                            "Fn::Join": [
                                                 "",
                                                 [
                                                     "http://",
@@ -1104,10 +1094,8 @@
                                                 ]
                                             ]
                                         }
-                    
                                     ]
-                    
-                                }    
+                                }
                             ]
                         },
                         {
@@ -1118,10 +1106,8 @@
                             ]
                         }
                     ]
-
                 ]
             }
         }
     }
-
 }
