@@ -1,6 +1,6 @@
 [
     {
-        "ParameterKey": "ALBCertificateARN",
+        "ParameterKey": "ALBSSLCertificateARN",
         "ParameterValue": ""
     },
     {
