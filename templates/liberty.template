@@ -340,6 +340,68 @@
                 }
             ]
         }
+        "ValidateHostedZone" : {
+            "RuleCondition" : {
+                "Fn::Not":[
+                    {
+                        "Fn::Equals":[
+                            {"Ref":"ALBSSLCertificateARN"},
+                             ""
+                        ]
+                    }
+                ]
+            },
+            "Assertions" : [
+                {
+                    "Assert" :  { 
+                        "Fn::Not":[
+                            {
+                                "Fn::Equals" : [
+                                    {"Ref" : "HostedZoneName"} ,
+                                    ""
+                                    
+                                ]
+                                
+                            }
+                        ]
+                        
+                    },
+                    "AssertDescription" : "Route53 Hosted Zone Name is mandatory when ACM certificate is used"
+                }
+            ]
+        },
+        "ValidateCloudFrontSSL" : {
+            "RuleCondition" : {
+                "Fn::Not":[
+                    {
+                        "Fn::Equals":[
+                            {"Ref":"CloudFrontACMCertificateARN"},
+                             ""
+                        ]
+                    }
+                ]
+            },
+            "Assertions" : [
+                {
+                    "Assert" :  { 
+                        "Fn::Not":[
+                            {
+                                "Fn::Equals" : [
+                                    {"Ref" : "ALBSSLCertificateARN"} ,
+                                    ""
+                                    
+                                ]
+                                
+                            }
+                        ]
+                        
+                    },
+                    "AssertDescription" : "ACM Certificate is mandatory for Application Load Balancer when ACM certificate is used for CloudFront"
+                }
+            ],
+            
+
+        }
     },
     "Mappings": {
         "AWSAMIRegionMap": {
