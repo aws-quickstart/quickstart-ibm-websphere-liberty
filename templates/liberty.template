@@ -339,7 +339,7 @@
                     "AssertDescription": "All subnets must in the VPC"
                 }
             ]
-        }
+        },
         "ValidateHostedZone" : {
             "RuleCondition" : {
                 "Fn::Not":[
@@ -1060,9 +1060,15 @@
                         ]
                     },
                     "LibertyCloudFrontDistribution": {
-                        "Fn::GetAtt": [
-                            "CloudFrontStack",
-                            "Outputs.CloudFrontDomainName"
+                        "Fn::If" :[
+                            "CreateCloudFrontDistribution",
+                            {
+                                "Fn::GetAtt": [
+                                    "CloudFrontStack",
+                                    "Outputs.CloudFrontDomainName"
+                                ]
+                            },
+                            "" 
                         ]
                     },
                     "HostedZoneName": {
