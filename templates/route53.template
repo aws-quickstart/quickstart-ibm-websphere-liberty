@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "This template creates a CloudFront distribution for an ALB origin. This template supports both HTTP and HTTPS for CloudFront. In case of SSL, you can use either an ACM Certificate or CloudFront's default certificate. A valid Route53 HostedZone is required as an input to generate the CNAME and ALB custom origin name . deploys an ASG behind an ELB load balancer in two private subnets. The cluster is configured to use an S3 bucket for storage **WARNING** This template creates AWS resources. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Description": "This template creates Route53 recordsets for CloudFront and Application Load Balancer. It takes an existing Hosted Zone Name as input. It creates A records for both CloudFront and Application Load Balancer. The A ecord for ALB uses the part of the ALB DNS Name before the first dot and suffixes it with the hosted zone. In case of CloudFront, it uses the stack name as the prefix followed by hosted zone. **WARNING** This template creates AWS resources. You will be billed for the AWS resources used if you create a stack from this template.",
  
     "Metadata": {
         "AWS::CloudFormation::Interface": {       
