@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Websphere Liberty Profile
+#
+# chkconfig: 345 85 15
+# description: Start the IBM WebSphere Liberty Application #Server as a service.",
+RETVAL=$?
+                      
+start() {
+  . /etc/profile.d/wlp.sh
+  echo "Starting IBM WebSphere Liberty Application Servers"
+  $WLP_BIN/server start 
+  RETVAL=$?
+}
+                      
+stop() {
+  . /etc/profile.d/wlp.sh
+  echo "Stopping IBM WebSphere Liberty Application Servers"
+  $WLP_BIN/server stop 
+  RETVAL=$?
+}
+                      
+status() {
+  . /etc/profile.d/wlp.sh
+  echo "Status of IBM WebSphere Liberty Application Servers"
+  $WLP_BIN/server status
+  RETVAL=$?
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    RETVAL=1
+                   
+esac
+exit $RETVAL

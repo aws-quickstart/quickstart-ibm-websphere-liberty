@@ -1,0 +1,66 @@
+[
+    {
+        "ParameterKey": "ALBSSLCertificateARN",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[alfred_genaz_2]"
+    },   
+    {
+        "ParameterKey": "BastionAMIOS",
+        "ParameterValue": "Amazon-Linux-HVM"
+    },
+    {
+        "ParameterKey": "BastionInstanceType",
+        "ParameterValue": "t2.micro"
+    },
+    {
+        "ParameterKey": "CloudFrontACMCertificateARN",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "CreateCloudFrontDistribution",
+        "ParameterValue": "Yes"
+    },
+    {
+        "ParameterKey": "DeploySampleApp",
+        "ParameterValue": "No"
+    },
+    {
+        "ParameterKey": "HostedZoneName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "$[alfred_getkeypair]"
+    },  
+    {
+        "ParameterKey": "LibertyInstanceType",
+        "ParameterValue": "t2.large"
+    },
+    {
+        "ParameterKey": "LibertyNodesMinSize",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "LibertyNodesMaxSize",
+        "ParameterValue": "4"
+    },
+    {
+        "ParameterKey": "LibertyNodesDesiredCapacity",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "OperatorEmail",
+        "ParameterValue": "foo@example.com"
+    },   
+    {
+        "ParameterKey": "RemoteAccessCIDR",
+        "ParameterValue": "10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.0.0.0/16"
+    }
+]
