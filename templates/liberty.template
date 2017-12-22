@@ -251,7 +251,8 @@
         },
         "StackName": {
             "Default": "AWS::StackName",
-            "Type": "String"
+            "Type": "String",
+            "Description": "Pseudoparameter. The name of the stack which will be passed on as a parameter if called from a parent stack. No input required."
         },
         "VPCID": {
             "Description": "ID of your existing VPC for deployment",
