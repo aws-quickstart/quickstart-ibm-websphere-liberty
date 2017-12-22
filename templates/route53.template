@@ -1,10 +1,8 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "This template creates Route53 recordsets for CloudFront and Application Load Balancer. It takes an existing Hosted Zone Name as input. It creates A records for both CloudFront and Application Load Balancer. The A ecord for ALB uses the part of the ALB DNS Name before the first dot and suffixes it with the hosted zone. In case of CloudFront, it uses the stack name as the prefix followed by hosted zone. **WARNING** This template creates AWS resources. You will be billed for the AWS resources used if you create a stack from this template.",
- 
+    "Description": "This template creates Route53 recordsets for CloudFront and Application Load Balancer. It takes an existing Hosted Zone Name as input. It creates A records for both CloudFront and Application Load Balancer. The A record for ALB uses the part of the ALB DNS Name before the first dot and suffixes it with the hosted zone. In case of CloudFront, it uses the stack name as the prefix followed by hosted zone. **WARNING** This template creates AWS resources. You will be billed for the AWS resources used if you create a stack from this template.",
     "Metadata": {
-        "AWS::CloudFormation::Interface": {       
-
+        "AWS::CloudFormation::Interface": {
             "ParameterGroups": [
                 {
                     "Label": {
@@ -18,77 +16,73 @@
                 },
                 {
                     "Label": {
-                            "default": "Application Load Balancer DNS"
+                        "default": "Application Load Balancer DNS"
                     },
                     "Parameters": [
-                            "ALBDNSName",
-                            "CanonicalHostedZoneID"
+                        "ALBDNSName",
+                        "CanonicalHostedZoneID"
                     ]
                 }
-            ] ,
+            ],
             "ParameterLabels": {
-                "UseACMCertificate": {
-                    "default": "CloudFront ACM Certificate Used?"
-                },
-                "LibertyCloudFrontDistribution":{
-                    "default": "Domain Name of CloudFront "
-                },
-                "HostedZoneName": {
-                    "default": "Hosted Zone Name in Route53"
-                },    
                 "ALBDNSName": {
                     "default": "DNS Name of Application Load Balancer"
                 },
-                "CanonicalHostedZoneID":{
+                "CanonicalHostedZoneID": {
                     "default": "Canonical HostZoneId of Application Load Balancer"
+                },
+                "HostedZoneName": {
+                    "default": "Hosted Zone Name in Route53"
+                },
+                "LibertyCloudFrontDistribution": {
+                    "default": "Domain Name of CloudFront "
+                },
+                "UseACMCertificate": {
+                    "default": "CloudFront ACM Certificate Used?"
                 }
             }
         }
     },
     "Parameters": {
-         "UseACMCertificate": {
-            "Default": "No",
-            "Description": "[Optional] If ACM Certificate is used for CloudFront? [Yes or No]",
-            "Type": "String"
-        },
-        "LibertyCloudFrontDistribution":{
-            "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
-            "Default":"",
-            "Description": "The domain name of a CloudFront Distribution.",
-            "Type": "String"
-        },
-       "HostedZoneName": {
-            "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
-            "Default":"",
-            "Description": "[ Optional ] The domain name (e.g. example.com) of a valid Hosted Zone on AWS. Leave empty if SSL is not required.",
-            "Type": "String"
-        },
-         "ALBDNSName": {
+        "ALBDNSName": {
             "Description": "The DNS of the Application Load Balancer.",
             "Type": "String"
         },
-        "CanonicalHostedZoneID":{
-             "Description": "CanonicalHostedZoneID of the Application Load Balancer.",
+        "CanonicalHostedZoneID": {
+            "Description": "CanonicalHostedZoneID of the Application Load Balancer.",
+            "Type": "String"
+        },
+        "HostedZoneName": {
+            "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+            "Default": "",
+            "Description": "[ Optional ] The domain name (e.g. example.com) of a valid Hosted Zone on AWS. Leave empty if SSL is not required.",
+            "Type": "String"
+        },
+        "LibertyCloudFrontDistribution": {
+            "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+            "Default": "",
+            "Description": "The domain name of a CloudFront Distribution.",
             "Type": "String"
         },
         "StackName": {
+            "Default": "",
             "Description": "The stackname to be used . Leave blank if not obtained from parent stack.",
-            "Default":"",
             "Type": "String"
-         }
-        
+        },
+        "UseACMCertificate": {
+            "Default": "No",
+            "Description": "[Optional] If ACM Certificate is used for CloudFront? [Yes or No]",
+            "Type": "String"
+        }
     },
-    
-    "Conditions":{
+    "Conditions": {
         "UseCloudFrontCustomSSL": {
-            
             "Fn::Equals": [
                 {
                     "Ref": "UseACMCertificate"
                 },
                 "Yes"
             ]
-                
         }
     },
     "Resources": {
@@ -112,14 +106,14 @@
                             "Fn::Join": [
                                 "",
                                 [
-                                    { 
-                                        "Fn::Select" : 
-                                        [ 
-                                            "0", 
-                                            { 
-                                                "Fn::Split": [".", 
+                                    {
+                                        "Fn::Select": [
+                                            "0",
+                                            {
+                                                "Fn::Split": [
+                                                    ".",
                                                     {
-                                                        "Ref":"ALBDNSName"
+                                                        "Ref": "ALBDNSName"
                                                     }
                                                 ]
                                             }
@@ -145,7 +139,7 @@
                         }
                     },
                     {
-                        "Fn::If":[
+                        "Fn::If": [
                             "UseCloudFrontCustomSSL",
                             {
                                 "Name": {
@@ -153,7 +147,7 @@
                                         "",
                                         [
                                             {
-                                               "Ref": "StackName"
+                                                "Ref": "StackName"
                                             },
                                             ".",
                                             {
@@ -163,10 +157,10 @@
                                         ]
                                     ]
                                 },
-                                "Type" : "A",
-                                "AliasTarget" : {
-                                    "HostedZoneId" : "Z2FDTNDATAQYW2",
-                                    "DNSName" : { 
+                                "Type": "A",
+                                "AliasTarget": {
+                                    "HostedZoneId": "Z2FDTNDATAQYW2",
+                                    "DNSName": {
                                         "Ref": "LibertyCloudFrontDistribution"
                                     }
                                 }
@@ -177,7 +171,7 @@
                         ]
                     }
                 ]
-            }   
+            }
         }
     }
 }

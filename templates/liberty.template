@@ -6,11 +6,14 @@
             "ParameterGroups": [
                 {
                     "Label": {
-                        "default": "AWS Quick Start Configuration"
+                        "default": "Network Configuration"
                     },
                     "Parameters": [
-                        "QSS3BucketName",
-                        "QSS3KeyPrefix"
+                        "VPCID",
+                        "PrivateSubnet1ID",
+                        "PrivateSubnet2ID",
+                        "PublicSubnet1ID",
+                        "PublicSubnet2ID"
                     ]
                 },
                 {
@@ -36,24 +39,21 @@
                 },
                 {
                     "Label": {
-                        "default": "Network Configuration"
-                    },
-                    "Parameters": [
-                        "VPCID",
-                        "PrivateSubnet1ID",
-                        "PrivateSubnet2ID",
-                        "PublicSubnet1ID",
-                        "PublicSubnet2ID"
-                    ]
-                },
-                {
-                    "Label": {
                         "default": "SSL Configuration"
                     },
                     "Parameters": [
                         "ALBSSLCertificateARN",
                         "CloudFrontACMCertificateARN",
                         "HostedZoneName"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "AWS Quick Start Configuration"
+                    },
+                    "Parameters": [
+                        "QSS3BucketName",
+                        "QSS3KeyPrefix"
                     ]
                 }
             ],
@@ -128,6 +128,12 @@
             "Description": "ID of the bastion host security group to enable SSH connections (e.g., sg-7f16e910)",
             "Type": "AWS::EC2::SecurityGroup::Id"
         },
+        "CloudFrontACMCertificateARN": {
+            "AllowedPattern": "^$|(arn:aws:acm:)([a-z0-9/:-])*([a-z0-9])$",
+            "Default": "",
+            "Description": "[ Optional ] The AWS Certification Manager certificate ARN for the CloudFront distribution certificate - this certificate should be created in the us-east-1 (N. Virginia) region and must reference the main domain name you use below.",
+            "Type": "String"
+        },
         "CreateCloudFrontDistribution": {
             "AllowedValues": [
                 "Yes",
@@ -136,12 +142,6 @@
             "ConstraintDescription": "Select yes to create a CloudFront distribution",
             "Default": "Yes",
             "Description": "Select \"Yes\" to create a CloudFront distribution (default), \"No\" to skip.",
-            "Type": "String"
-        },
-        "CloudFrontACMCertificateARN": {
-            "AllowedPattern": "^$|(arn:aws:acm:)([a-z0-9/:-])*([a-z0-9])$",
-            "Description": "[ Optional ] The AWS Certification Manager certificate ARN for the CloudFront distribution certificate - this certificate should be created in the us-east-1 (N. Virginia) region and must reference the main domain name you use below.",
-            "Default": "",
             "Type": "String"
         },
         "DeploySampleApp": {
@@ -156,8 +156,8 @@
         },
         "HostedZoneName": {
             "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
-            "Description": "The domain name of a valid Hosted Zone on AWS.",
             "Default": "",
+            "Description": "The domain name of a valid Hosted Zone on AWS.",
             "Type": "String"
         },
         "KeyPairName": {
@@ -341,67 +341,67 @@
                 }
             ]
         },
-        "ValidateHostedZone" : {
-            "RuleCondition" : {
-                "Fn::Not":[
+        "ValidateHostedZone": {
+            "RuleCondition": {
+                "Fn::Not": [
                     {
-                        "Fn::Equals":[
-                            {"Ref":"ALBSSLCertificateARN"},
-                             ""
+                        "Fn::Equals": [
+                            {
+                                "Ref": "ALBSSLCertificateARN"
+                            },
+                            ""
                         ]
                     }
                 ]
             },
-            "Assertions" : [
+            "Assertions": [
                 {
-                    "Assert" :  { 
-                        "Fn::Not":[
+                    "Assert": {
+                        "Fn::Not": [
                             {
-                                "Fn::Equals" : [
-                                    {"Ref" : "HostedZoneName"} ,
+                                "Fn::Equals": [
+                                    {
+                                        "Ref": "HostedZoneName"
+                                    },
                                     ""
-                                    
                                 ]
-                                
                             }
                         ]
-                        
                     },
-                    "AssertDescription" : "Route53 Hosted Zone Name is mandatory when ACM certificate is used"
+                    "AssertDescription": "Route53 Hosted Zone Name is mandatory when ACM certificate is used"
                 }
             ]
         },
-        "ValidateCloudFrontSSL" : {
-            "RuleCondition" : {
-                "Fn::Not":[
+        "ValidateCloudFrontSSL": {
+            "RuleCondition": {
+                "Fn::Not": [
                     {
-                        "Fn::Equals":[
-                            {"Ref":"CloudFrontACMCertificateARN"},
-                             ""
+                        "Fn::Equals": [
+                            {
+                                "Ref": "CloudFrontACMCertificateARN"
+                            },
+                            ""
                         ]
                     }
                 ]
             },
-            "Assertions" : [
+            "Assertions": [
                 {
-                    "Assert" :  { 
-                        "Fn::Not":[
+                    "Assert": {
+                        "Fn::Not": [
                             {
-                                "Fn::Equals" : [
-                                    {"Ref" : "ALBSSLCertificateARN"} ,
+                                "Fn::Equals": [
+                                    {
+                                        "Ref": "ALBSSLCertificateARN"
+                                    },
                                     ""
-                                    
                                 ]
-                                
                             }
                         ]
-                        
                     },
-                    "AssertDescription" : "ACM Certificate is mandatory for Application Load Balancer when ACM certificate is used for CloudFront"
+                    "AssertDescription": "ACM Certificate is mandatory for Application Load Balancer when ACM certificate is used for CloudFront"
                 }
-            ],
-            
-
+            ]
         }
     },
     "Mappings": {
@@ -1061,7 +1061,7 @@
                         ]
                     },
                     "LibertyCloudFrontDistribution": {
-                        "Fn::If" :[
+                        "Fn::If": [
                             "CreateCloudFrontDistribution",
                             {
                                 "Fn::GetAtt": [
@@ -1069,7 +1069,7 @@
                                     "Outputs.CloudFrontDomainName"
                                 ]
                             },
-                            "" 
+                            ""
                         ]
                     },
                     "HostedZoneName": {

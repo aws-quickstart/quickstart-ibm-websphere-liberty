@@ -6,11 +6,16 @@
             "ParameterGroups": [
                 {
                     "Label": {
-                        "default": "AWS Quick Start Configuration"
+                        "default": "Network Configuration"
                     },
                     "Parameters": [
-                        "QSS3BucketName",
-                        "QSS3KeyPrefix"
+                        "AvailabilityZones",
+                        "VPCCIDR",
+                        "PrivateSubnet1CIDR",
+                        "PrivateSubnet2CIDR",
+                        "PublicSubnet1CIDR",
+                        "PublicSubnet2CIDR",
+                        "RemoteAccessCIDR"
                     ]
                 },
                 {
@@ -20,7 +25,7 @@
                     "Parameters": [
                         "KeyPairName",
                         "BastionAMIOS",
-                        "BastionInstanceType"  
+                        "BastionInstanceType"
                     ]
                 },
                 {
@@ -37,26 +42,21 @@
                 },
                 {
                     "Label": {
-                        "default": "Network Configuration"
-                    },
-                    "Parameters": [
-                        "AvailabilityZones",
-                        "VPCCIDR",
-                        "PrivateSubnet1CIDR",
-                        "PrivateSubnet2CIDR",
-                        "PublicSubnet1CIDR",
-                        "PublicSubnet2CIDR",
-                        "RemoteAccessCIDR"
-                    ]
-                }, 
-                {
-                    "Label": {
                         "default": "SSL Configuration"
                     },
                     "Parameters": [
                         "ALBSSLCertificateARN",
                         "CloudFrontACMCertificateARN",
                         "HostedZoneName"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "AWS Quick Start Configuration"
+                    },
+                    "Parameters": [
+                        "QSS3BucketName",
+                        "QSS3KeyPrefix"
                     ]
                 }
             ],
@@ -73,13 +73,13 @@
                 "BastionInstanceType": {
                     "default": "Bastion Instance Type"
                 },
-                "CloudFrontACMCertificateARN":{
+                "CloudFrontACMCertificateARN": {
                     "default": "ARN of ACM Certificate for CloudFront"
                 },
                 "CreateCloudFrontDistribution": {
                     "default": "Create a CloudFront Distribution?"
                 },
-                "DeploySampleApp":{
+                "DeploySampleApp": {
                     "default": "Deploy Sample Application?"
                 },
                 "HostedZoneName": {
@@ -88,7 +88,7 @@
                 "KeyPairName": {
                     "default": "Key Pair Name"
                 },
-                 "LibertyInstanceType": {
+                "LibertyInstanceType": {
                     "default": "Liberty Server Instance Type"
                 },
                 "LibertyNodesDesiredCapacity": {
@@ -130,8 +130,6 @@
                 "VPCCIDR": {
                     "default": "VPC CIDR"
                 }
-               
-                
             }
         }
     },
@@ -175,6 +173,11 @@
             "Description": "Amazon EC2 instance type for the bastion instances",
             "Type": "String"
         },
+        "CloudFrontACMCertificateARN": {
+            "AllowedPattern": "^$|(arn:aws:acm:)([a-z0-9/:-])*([a-z0-9])$",
+            "Description": "[ Optional ] The AWS Certification Manager certificate ARN for the CloudFront distribution certificate - this certificate should be created in the us-east-1 (N. Virginia) region and must reference the main domain name you use below.",
+            "Type": "String"
+        },
         "CreateCloudFrontDistribution": {
             "AllowedValues": [
                 "Yes",
@@ -183,11 +186,6 @@
             "ConstraintDescription": "Select yes to create a CloudFront distribution",
             "Default": "Yes",
             "Description": "Select \"Yes\" to create a CloudFront distribution (default), \"No\" to skip.",
-            "Type": "String"
-        },
-        "CloudFrontACMCertificateARN": {
-            "AllowedPattern": "^$|(arn:aws:acm:)([a-z0-9/:-])*([a-z0-9])$",
-            "Description": "[ Optional ] The AWS Certification Manager certificate ARN for the CloudFront distribution certificate - this certificate should be created in the us-east-1 (N. Virginia) region and must reference the main domain name you use below.",
             "Type": "String"
         },
         "DeploySampleApp": {
@@ -202,8 +200,8 @@
         },
         "HostedZoneName": {
             "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+            "Default": "",
             "Description": "The domain name of a valid Hosted Zone on AWS.",
-            "Default":"",
             "Type": "String"
         },
         "KeyPairName": {
@@ -312,14 +310,14 @@
             "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/x",
             "Description": "The CIDR IP range that is permitted to access the bastions. We recommend that you set this value to a trusted IP range.",
             "Type": "String"
-        },  
+        },
         "VPCCIDR": {
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
             "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default": "10.0.0.0/16",
             "Description": "CIDR block for the VPC",
             "Type": "String"
-        }      
+        }
     },
     "Resources": {
         "VPCStack": {
@@ -413,8 +411,8 @@
                 "TemplateURL": {
                     "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/liberty.template"
                 },
-                "Parameters": {  
-                    "ALBSSLCertificateARN":{
+                "Parameters": {
+                    "ALBSSLCertificateARN": {
                         "Ref": "ALBSSLCertificateARN"
                     },
                     "BastionSecurityGroupID": {
@@ -427,14 +425,14 @@
                         "Ref": "CreateCloudFrontDistribution"
                     },
                     "CloudFrontACMCertificateARN": {
-                        "Ref":"CloudFrontACMCertificateARN"
+                        "Ref": "CloudFrontACMCertificateARN"
                     },
                     "DeploySampleApp": {
                         "Ref": "DeploySampleApp"
-                    }, 
-                    "HostedZoneName": {        
-                        "Ref":"HostedZoneName"
-                    },        
+                    },
+                    "HostedZoneName": {
+                        "Ref": "HostedZoneName"
+                    },
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
@@ -483,15 +481,15 @@
                     "QSS3KeyPrefix": {
                         "Ref": "QSS3KeyPrefix"
                     },
-                    "StackName":{
-                       "Ref": "AWS::StackName" 
+                    "StackName": {
+                        "Ref": "AWS::StackName"
                     },
                     "VPCID": {
                         "Fn::GetAtt": [
                             "VPCStack",
                             "Outputs.VPCID"
                         ]
-                    }                    
+                    }
                 }
             }
         }
