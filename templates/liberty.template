@@ -250,9 +250,9 @@
             "Type": "String"
         },
         "StackName": {
-            "Default": "AWS::StackName",
+            "Default": "",
             "Type": "String",
-            "Description": "Pseudoparameter. The name of the stack which will be passed on as a parameter if called from a parent stack. No input required."
+            "Description": "Pseudoparameter. Leave Blank."
         },
         "VPCID": {
             "Description": "ID of your existing VPC for deployment",
@@ -294,6 +294,18 @@
                     "Fn::Equals": [
                         {
                             "Ref": "CloudFrontACMCertificateARN"
+                        },
+                        ""
+                    ]
+                }
+            ]
+        },
+        "StackNameExists": {
+            "Fn::Not": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "StackName"
                         },
                         ""
                     ]
@@ -1040,7 +1052,16 @@
                         ]
                     },
                     "StackName": {
-                        "Ref": "StackName"
+                        "Fn::If": [
+                            "StackNameExists",
+                            {
+                                "Ref": "StackName"
+                            },
+                            {
+                                "Ref": "AWS::StackName"
+                            }
+                            
+                        ]
                     }
                 }
             }
@@ -1088,7 +1109,16 @@
                         ]
                     },
                     "StackName": {
-                        "Ref": "StackName"
+                        "Fn::If": [
+                            "StackNameExists",
+                            {
+                                "Ref": "StackName"
+                            },
+                            {
+                                "Ref": "AWS::StackName"
+                            }
+                            
+                        ]
                     }
                 }
             }
