@@ -34,7 +34,8 @@
                         "LibertyNodesMinSize",
                         "LibertyNodesMaxSize",
                         "LibertyNodesDesiredCapacity",
-                        "OperatorEmail"
+                        "OperatorEmail",
+                        "DeploySampleApp"
                     ]
                 },
                 {
@@ -44,7 +45,8 @@
                     "Parameters": [
                         "ALBSSLCertificateARN",
                         "CloudFrontACMCertificateARN",
-                        "HostedZoneName"
+                        "HostedZoneName",
+                        "CreateCloudFrontDistribution"
                     ]
                 },
                 {
