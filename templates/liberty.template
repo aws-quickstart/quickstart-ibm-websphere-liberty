@@ -76,7 +76,7 @@
                     "default": "Deploy Sample Application?"
                 },
                 "HostedZoneName": {
-                    "default": "Hosted Zone Name in Route53 corresponding to the domain name of the web site"
+                    "default": "Hosted Zone Name in Route 53 corresponding to the domain name of the web site"
                 },
                 "KeyPairName": {
                     "default": "SSH Key Name"
@@ -107,6 +107,9 @@
                 },
                 "PublicSubnet2ID": {
                     "default": "Public Subnet 2 ID"
+                },
+                "StackName": {
+                	"default": "Stack Name"
                 },
                 "QSS3BucketName": {
                     "default": "Quick Start S3 Bucket Name"
