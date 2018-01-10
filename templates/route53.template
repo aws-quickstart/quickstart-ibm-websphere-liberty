@@ -64,9 +64,9 @@
             "Description": "The domain name of a CloudFront Distribution.",
             "Type": "String"
         },
-        "StackName": {
+        "Prefix": {
             "Default": "",
-            "Description": "The stackname to be used . Leave blank if not obtained from parent stack.",
+            "Description": "The Prefix to be used . Leave blank if not obtained from parent stack.",
             "Type": "String"
         },
         "UseACMCertificate": {
@@ -147,7 +147,7 @@
                                         "",
                                         [
                                             {
-                                                "Ref": "StackName"
+                                                "Ref": "Prefix"
                                             },
                                             ".",
                                             {

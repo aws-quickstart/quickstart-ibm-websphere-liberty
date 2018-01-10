@@ -108,8 +108,8 @@
                 "PublicSubnet2ID": {
                     "default": "Public Subnet 2 ID"
                 },
-                "StackName": {
-                	"default": "Stack Name"
+                "RecordSetPrefix": {
+                	"default": "Record Set Prefix"
                 },
                 "QSS3BucketName": {
                     "default": "Quick Start S3 Bucket Name"
@@ -254,7 +254,7 @@
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Type": "String"
         },
-        "StackName": {
+        "RecordSetPrefix": {
             "Default": "",
             "Type": "String",
             "Description": "Pseudoparameter. Leave Blank."
@@ -305,12 +305,12 @@
                 }
             ]
         },
-        "StackNameExists": {
+        "RecordSetPrefixExists": {
             "Fn::Not": [
                 {
                     "Fn::Equals": [
                         {
-                            "Ref": "StackName"
+                            "Ref": "RecordSetPrefix"
                         },
                         ""
                     ]
@@ -1056,11 +1056,11 @@
                             "DNSName"
                         ]
                     },
-                    "StackName": {
+                    "Prefix": {
                         "Fn::If": [
-                            "StackNameExists",
+                            "RecordSetPrefixExists",
                             {
-                                "Ref": "StackName"
+                                "Ref": "RecordSetPrefix"
                             },
                             {
                                 "Ref": "AWS::StackName"
@@ -1112,11 +1112,11 @@
                             "CanonicalHostedZoneID"
                         ]
                     },
-                    "StackName": {
+                    "Prefix": {
                         "Fn::If": [
-                            "StackNameExists",
+                            "RecordSetPrefixExists",
                             {
-                                "Ref": "StackName"
+                                "Ref": "RecordSetPrefix"
                             },
                             {
                                 "Ref": "AWS::StackName"

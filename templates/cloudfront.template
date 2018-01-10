@@ -55,9 +55,9 @@
             "Description": "[ Optional ] The domain name (e.g. example.com) of a valid Hosted Zone on AWS. Leave empty if SSL is not required.",
             "Type": "String"
         },
-        "StackName": {
+        "Prefix": {
             "Default": "",
-            "Description": "The stackname to be used . Leave blank if not obtained from parent stack.",
+            "Description": "The Prefix to be used . Leave blank if not obtained from parent stack.",
             "Type": "String"
         },
         "UseSSL": {
@@ -114,7 +114,7 @@
                                         "",
                                         [
                                             {
-                                                "Ref": "StackName"
+                                                "Ref": "Prefix"
                                             },
                                             ".",
                                             {
@@ -246,7 +246,7 @@
                                                             "",
                                                             [
                                                                 {
-                                                                    "Ref": "StackName"
+                                                                    "Ref": "Prefix"
                                                                 },
                                                                 ".",
                                                                 {
