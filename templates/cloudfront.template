@@ -30,6 +30,9 @@
                 "CloudFrontACMCertificateARN": {
                     "default": "ARN of ACM Certificate for CloudFront"
                 },
+                "CNAMEAlias": {
+                    "default": "CloudFront Alternate Domain"
+                },
                 "HostedZoneName": {
                     "default": "Hosted Zone Name in Route53"
                 },
@@ -49,15 +52,15 @@
             "Description": "[ Optional ] The AWS Certification Manager certificate ARN for the CloudFront distribution certificate - this certificate should be created in the us-east-1 (N. Virginia) region and must reference the main domain name you use below.",
             "Type": "String"
         },
+        "CNAMEAlias": {
+            "Default": "",
+            "Description": "CloudFront CNAME alias to be used e.g. my-cf.xyz.example.com",
+            "Type": "String"
+        },
         "HostedZoneName": {
             "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
             "Default": "",
             "Description": "[ Optional ] The domain name (e.g. example.com) of a valid Hosted Zone on AWS. Leave empty if SSL is not required.",
-            "Type": "String"
-        },
-        "Prefix": {
-            "Default": "",
-            "Description": "The Prefix to be used . Leave blank if not obtained from parent stack.",
             "Type": "String"
         },
         "UseSSL": {
@@ -110,18 +113,7 @@
                             "Fn::If": [
                                 "UseCloudFrontACMCert",
                                 {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            {
-                                                "Ref": "Prefix"
-                                            },
-                                            ".",
-                                            {
-                                                "Ref": "HostedZoneName"
-                                            }
-                                        ]
-                                    ]
+                                    "Ref": "CNAMEAlias"
                                 },
                                 {
                                     "Ref": "AWS::NoValue"
@@ -242,19 +234,7 @@
                                                 "Fn::If": [
                                                     "UseCloudFrontACMCert",
                                                     {
-                                                        "Fn::Join": [
-                                                            "",
-                                                            [
-                                                                {
-                                                                    "Ref": "Prefix"
-                                                                },
-                                                                ".",
-                                                                {
-                                                                    "Ref": "HostedZoneName"
-                                                                },
-                                                                "."
-                                                            ]
-                                                        ]
+                                                        "Ref": "CNAMEAlias"
                                                     },
                                                     {
                                                         "Fn::GetAtt": [

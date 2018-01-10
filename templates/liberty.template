@@ -46,7 +46,8 @@
                         "ALBSSLCertificateARN",
                         "CloudFrontACMCertificateARN",
                         "HostedZoneName",
-                        "CreateCloudFrontDistribution"
+                        "CreateCloudFrontDistribution",
+                        "LibertyCloudFrontCNAME"
                     ]
                 },
                 {
@@ -81,6 +82,9 @@
                 "KeyPairName": {
                     "default": "SSH Key Name"
                 },
+                "LibertyCloudFrontCNAME": {
+                    "default": "CloudFront CNAME Alias"
+                },
                 "LibertyInstanceType": {
                     "default": "Liberty Servers Instance Type"
                 },
@@ -107,9 +111,6 @@
                 },
                 "PublicSubnet2ID": {
                     "default": "Public Subnet 2 ID"
-                },
-                "RecordSetPrefix": {
-                	"default": "Record Set Prefix"
                 },
                 "QSS3BucketName": {
                     "default": "Quick Start S3 Bucket Name"
@@ -168,6 +169,12 @@
         "KeyPairName": {
             "Description": "Name of an existing EC2 key pair. All instances will launch with this key pair.",
             "Type": "AWS::EC2::KeyPair::KeyName"
+        },
+        "LibertyCloudFrontCNAME": {
+            "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+            "Default": "",
+            "Type": "String",
+            "Description": "Alternate Domain Name for CloudFront Distribution e.g. 'my-liberty-cf.example.com'. Used only if Cloudfront distribution is created with SSL. The provided cname alias must match the specified HostedZoneName."
         },
         "LibertyInstanceType": {
             "AllowedValues": [
@@ -254,11 +261,6 @@
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Type": "String"
         },
-        "RecordSetPrefix": {
-            "Default": "",
-            "Type": "String",
-            "Description": "Pseudoparameter. Leave Blank."
-        },
         "VPCID": {
             "Description": "ID of your existing VPC for deployment",
             "Type": "AWS::EC2::VPC::Id"
@@ -299,18 +301,6 @@
                     "Fn::Equals": [
                         {
                             "Ref": "CloudFrontACMCertificateARN"
-                        },
-                        ""
-                    ]
-                }
-            ]
-        },
-        "RecordSetPrefixExists": {
-            "Fn::Not": [
-                {
-                    "Fn::Equals": [
-                        {
-                            "Ref": "RecordSetPrefix"
                         },
                         ""
                     ]
@@ -417,6 +407,21 @@
                         ]
                     },
                     "AssertDescription": "ACM Certificate is mandatory for Application Load Balancer when ACM certificate is used for CloudFront"
+                },
+                {
+                    "Assert": {
+                        "Fn::Not": [
+                            {
+                                "Fn::Equals": [
+                                    {
+                                        "Ref": "LibertyCloudFrontCNAME"
+                                    },
+                                    ""
+                                ]
+                            }
+                        ]
+                    },
+                    "AssertDescription": "LibertyCloudFrontCNAME is mandatory when ACM certificate is used for CloudFront"
                 }
             ]
         }
@@ -1056,16 +1061,8 @@
                             "DNSName"
                         ]
                     },
-                    "Prefix": {
-                        "Fn::If": [
-                            "RecordSetPrefixExists",
-                            {
-                                "Ref": "RecordSetPrefix"
-                            },
-                            {
-                                "Ref": "AWS::StackName"
-                            }
-                        ]
+                    "CNAMEAlias": {
+                        "Ref": "LibertyCloudFrontCNAME"
                     }
                 }
             }
@@ -1112,16 +1109,8 @@
                             "CanonicalHostedZoneID"
                         ]
                     },
-                    "Prefix": {
-                        "Fn::If": [
-                            "RecordSetPrefixExists",
-                            {
-                                "Ref": "RecordSetPrefix"
-                            },
-                            {
-                                "Ref": "AWS::StackName"
-                            }
-                        ]
+                    "CloudFrontCNAMEAlias": {
+                        "Ref": "LibertyCloudFrontCNAME"
                     }
                 }
             }

@@ -49,7 +49,8 @@
                         "ALBSSLCertificateARN",
                         "CloudFrontACMCertificateARN",
                         "HostedZoneName",
-                        "CreateCloudFrontDistribution"
+                        "CreateCloudFrontDistribution",
+                        "LibertyCloudFrontCNAME"
                     ]
                 },
                 {
@@ -90,6 +91,9 @@
                 "KeyPairName": {
                     "default": "Key Pair Name"
                 },
+                "LibertyCloudFrontCNAME": {
+                    "default": "CloudFront CNAME Alias"
+                },
                 "LibertyInstanceType": {
                     "default": "Liberty Server Instance Type"
                 },
@@ -125,9 +129,6 @@
                 },
                 "RemoteAccessCIDR": {
                     "default": "Allowed Bastion External Access CIDR"
-                },
-                "SSLCertificateId": {
-                    "default": "SSL certificate ARN"
                 },
                 "VPCCIDR": {
                     "default": "VPC CIDR"
@@ -209,6 +210,12 @@
         "KeyPairName": {
             "Description": "The name of an existing public/private key pair, which allows you to securely connect to your instance after it launches",
             "Type": "AWS::EC2::KeyPair::KeyName"
+        },
+        "LibertyCloudFrontCNAME": {
+            "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+            "Default": "",
+            "Type": "String",
+            "Description": "Alternate Domain Name for CloudFront Distribution e.g. 'my-liberty-cf.example.com'. Used only if Cloudfront distribution is created with SSL. The provided cname alias must match the specified HostedZoneName."
         },
         "LibertyInstanceType": {
             "AllowedValues": [
@@ -438,6 +445,9 @@
                     "KeyPairName": {
                         "Ref": "KeyPairName"
                     },
+                    "LibertyCloudFrontCNAME": {
+                        "Ref": "LibertyCloudFrontCNAME"
+                    },
                     "LibertyInstanceType": {
                         "Ref": "LibertyInstanceType"
                     },
@@ -482,9 +492,6 @@
                     },
                     "QSS3KeyPrefix": {
                         "Ref": "QSS3KeyPrefix"
-                    },
-                    "RecordSetPrefix": {
-                        "Ref": "AWS::StackName"
                     },
                     "VPCID": {
                         "Fn::GetAtt": [

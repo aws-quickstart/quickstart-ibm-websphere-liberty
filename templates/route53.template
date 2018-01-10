@@ -64,9 +64,9 @@
             "Description": "The domain name of a CloudFront Distribution.",
             "Type": "String"
         },
-        "Prefix": {
+        "CloudFrontCNAMEAlias": {
             "Default": "",
-            "Description": "The Prefix to be used . Leave blank if not obtained from parent stack.",
+            "Description": "CloudFront CNAME alias for the record set e.g. my-cf.xyz.example.com",
             "Type": "String"
         },
         "UseACMCertificate": {
@@ -147,11 +147,7 @@
                                         "",
                                         [
                                             {
-                                                "Ref": "Prefix"
-                                            },
-                                            ".",
-                                            {
-                                                "Ref": "HostedZoneName"
+                                                "Ref": "CloudFrontCNAMEAlias"
                                             },
                                             "."
                                         ]
