@@ -215,7 +215,7 @@
             "AllowedPattern": "^$|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
             "Default": "",
             "Type": "String",
-            "Description": "Alternate Domain Name for CloudFront Distribution e.g. 'my-liberty-cf.example.com'. Used only if Cloudfront distribution is created with SSL. The provided cname alias must match the specified HostedZoneName."
+            "Description": "Alternate Domain Name for CloudFront Distribution e.g. 'my-liberty-cf.example.com'. Required if CreateCloudFrontDistribution is set to yes. The provided cname alias must match the specified HostedZoneName."
         },
         "LibertyInstanceType": {
             "AllowedValues": [
