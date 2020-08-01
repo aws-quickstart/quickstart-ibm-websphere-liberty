@@ -6,10 +6,6 @@
     {
         "ParameterKey": "AvailabilityZones",
         "ParameterValue": "$[alfred_genaz_2]"
-    },   
-    {
-        "ParameterKey": "BastionAMIOS",
-        "ParameterValue": "Amazon-Linux-HVM"
     },
     {
         "ParameterKey": "BastionInstanceType",

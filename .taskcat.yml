@@ -23,7 +23,6 @@ tests:
     parameters:
       ALBSSLCertificateARN: ''
       AvailabilityZones: $[alfred_genaz_2]
-      BastionAMIOS: Amazon-Linux-HVM
       BastionInstanceType: t2.micro
       CloudFrontACMCertificateARN: ''
       CreateCloudFrontDistribution: 'Yes'
